@@ -9,6 +9,9 @@
 - [Чем функциональные компоненты отличаются от классовых?](#чем-функциональные-компоненты-отличаются-от-классовых)
 - [Что такое хуки и зачем они появились?](#что-такое-хуки-и-зачем-они-появились)
 - [Для чего нужен prop key в списках?](#для-чего-нужен-prop-key-в-списках)
+- [Что такое Fragment и чем он лучше div-обёртки?](#что-такое-fragment-и-чем-он-лучше-div-обёртки)
+- [Что такое prop drilling и как его избежать?](#что-такое-prop-drilling-и-как-его-избежать)
+- [Способы условного рендеринга в React?](#способы-условного-рендеринга-в-react)
 
 ---
 
@@ -126,3 +129,123 @@ items.map(item => <Item key={item.id} {...item} />);
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Что такое Fragment и чем он лучше div-обёртки?
+
+`React.Fragment` (или `<>...</>`) — специальный компонент для группировки нескольких элементов без создания лишнего DOM-узла. Преимущества перед `<div>`:
+
+- Не засоряет DOM лишними узлами
+- Не ломает семантику CSS (`flexbox`, `grid`) от родительского элемента
+- Не добавляет лишних узлов в `<tr>`/`<td>`, `<ul>`/`<li>` (где `<div>` невалиден)
+
+```tsx
+// Плохо: лишний div
+return (
+  <div>
+    <h1>Заголовок</h1>
+    <p>Текст</p>
+  </div>
+);
+
+// Хорошо: Fragment
+return (
+  <>
+    <h1>Заголовок</h1>
+    <p>Текст</p>
+  </>
+);
+
+// Длинный синтаксис нужен когда нужен key (render list)
+return (
+  <React.Fragment key={item.id}>
+    <dt>{item.term}</dt>
+    <dd>{item.description}</dd>
+  </React.Fragment>
+);
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [React Docs: Fragment](https://react.dev/reference/react/Fragment)
+
+---
+
+## Что такое prop drilling и как его избежать?
+
+Prop drilling — передача данных через несколько уровней компонентов, даже если промежуточные компоненты эти данные не используют. Приводит к связанности и усложняет рефакторинг.
+
+**Способы избежать:**
+
+1. **Context API** — для глобальных данных (тема, локаль, пользователь)
+2. **State manager** (Zustand, Redux) — для сложного состояния
+3. **Component composition** — передача `children` или render props вместо пропсов
+
+```tsx
+// Проблема: theme просачивается через App → Layout → Sidebar → Button
+// Решение через Context:
+const ThemeContext = createContext('light');
+
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <Layout />  {/* не нужно пробрасывать theme через Layout */}
+    </ThemeContext.Provider>
+  );
+}
+
+function Button() {
+  const theme = useContext(ThemeContext); // доступ напрямую
+  return <button className={theme}>...</button>;
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [React Docs: Passing data deeply with Context](https://react.dev/learn/passing-data-deeply-with-context)
+
+---
+
+## Способы условного рендеринга в React?
+
+Условный рендеринг — вывод разного JSX в зависимости от условий. Основные подходы:
+
+```tsx
+// 1. Тернарный оператор
+const El = condition ? <A /> : <B />;
+
+// 2. && (осторожно: 0 && рендерит 0!)
+const El = isLoggedIn && <Dashboard />;
+// Безопасный вариант:
+const El = !!items.length && <List />;
+
+// 3. Переменная + if
+let content;
+if (status === 'loading') content = <Spinner />;
+else if (status === 'error') content = <Error />;
+else content = <Data />;
+
+// 4. Switch внутри функции — для сложной логики
+const renderByRole = (role: string) => {
+  switch (role) {
+    case 'admin': return <AdminView />;
+    case 'user':  return <UserView />;
+    default:      return <GuestView />;
+  }
+};
+```
+
+**Связанные задачи:**
+
+- [Clock: компонент часов](../../../tasks/frontend/react/1_react_junior.md#clock-компонент-часов)
+
+**Материалы для изучения:**
+
+- [React Docs: Conditional rendering](https://react.dev/learn/conditional-rendering)

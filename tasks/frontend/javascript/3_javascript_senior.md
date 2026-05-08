@@ -6,6 +6,9 @@
 - [Реализация Promise.all и Promise.allSettled](#реализация-promiseall-и-promiseallsettled)
 - [Параллельный fetch с обработкой ошибок](#параллельный-fetch-с-обработкой-ошибок)
 - [Запрос с повторными попытками (retry с exponential backoff)](#запрос-с-повторными-попытками-retry-с-exponential-backoff)
+- [Агрегация данных из нескольких API](#агрегация-данных-из-нескольких-api)
+- [Класс EventEmitter](#класс-eventemitter)
+- [Банкомат: выдача купюр (getMoney)](#банкомат-выдача-купюр-getmoney)
 
 ---
 
@@ -203,6 +206,176 @@ async function fetchWithRetry(url, retries = 3, baseDelay = 300) {
 fetchWithRetry("/api/data", 3, 200)
   .then(data => console.log(data))
   .catch(err => console.error("All retries failed:", err.message));
+```
+
+</details>
+
+---
+
+## Агрегация данных из нескольких API
+
+Напишите асинхронную функцию `getPosts()`, которая параллельно запрашивает данные из трёх эндпоинтов и возвращает агрегированный список постов:
+
+- `GET /posts` — список постов (`id`, `userId`, `title`)
+- `GET /users` — пользователи (`id`, `name`)
+- `GET /comments` — комментарии (`postId`, ...)
+
+Результат — массив объектов вида:
+```javascript
+// [{ id, title, userName, commentsCount }, ...]
+```
+
+**Связанные вопросы:**
+
+- [Чем отличаются Promise.all, allSettled, race, any?](../../../interviews/frontend/javascript/3_javascript_senior.md#чем-отличаются-promiseall-allsettled-race-any)
+
+<details>
+<summary>Решение</summary>
+
+```javascript
+const BASE = 'https://jsonplaceholder.typicode.com';
+
+const getPosts = async () => {
+  const [posts, users, comments] = await Promise.all([
+    fetch(`${BASE}/posts`).then(r => r.json()),
+    fetch(`${BASE}/users`).then(r => r.json()),
+    fetch(`${BASE}/comments`).then(r => r.json()),
+  ]);
+
+  // Индексы для быстрого поиска O(1)
+  const usersById = Object.fromEntries(users.map(u => [u.id, u.name]));
+  const commentCountByPost = comments.reduce((acc, c) => {
+    acc[c.postId] = (acc[c.postId] || 0) + 1;
+    return acc;
+  }, {});
+
+  return posts.map(post => ({
+    id: post.id,
+    title: post.title,
+    userName: usersById[post.userId] ?? 'Unknown',
+    commentsCount: commentCountByPost[post.id] ?? 0,
+  }));
+};
+
+getPosts().then(data => console.log(data));
+```
+
+</details>
+
+---
+
+## Класс EventEmitter
+
+Реализуйте класс `EventEmitter` с тремя методами:
+- `on(event, listener)` — подписаться на событие
+- `off(event, listener)` — отписаться
+- `emit(event, ...args)` — вызвать все подписчики события
+
+```javascript
+const emitter = new EventEmitter();
+
+const greetListener = (name) => console.log(`Hello, ${name}!`);
+
+emitter.on('greet', greetListener);
+emitter.emit('greet', 'Alice'); // Hello, Alice!
+
+emitter.off('greet', greetListener);
+emitter.emit('greet', 'Bob');   // Без вывода
+```
+
+**Связанные вопросы:**
+
+<!-- Связанных вопросов нет -->
+
+<details>
+<summary>Решение</summary>
+
+```javascript
+class EventEmitter {
+  constructor() {
+    this.events = {}; // Record<string, Function[]>
+  }
+
+  on(event, listener) {
+    if (!this.events[event]) this.events[event] = [];
+    this.events[event].push(listener);
+    return this; // позволяет цепочку .on().on()
+  }
+
+  off(event, listener) {
+    if (!this.events[event]) return this;
+    this.events[event] = this.events[event].filter(l => l !== listener);
+    return this;
+  }
+
+  emit(event, ...args) {
+    if (!this.events[event]) return;
+    // копия массива чтобы off внутри листенера не сломал итерацию
+    [...this.events[event]].forEach(listener => listener(...args));
+  }
+}
+```
+
+</details>
+
+---
+
+## Банкомат: выдача купюр (getMoney)
+
+**Задача 1:** Реализуйте функцию `getMoney(amount)`, которая возвращает объект с количеством купюр каждого номинала (минимальное количество купюр). Доступные номиналы: 5000, 2000, 1000, 500, 100, 50.
+
+**Задача 2:** Добавить ограничения по каждому номиналу через объект `limits`.
+
+```javascript
+getMoney(6200);
+// { 5000: 1, 2000: 0, 1000: 1, 500: 0, 100: 2, 50: 0 }
+
+getMoney(6200, { 5000: 0, 2000: 2, 1000: 7, 100: 5 });
+// { 5000: 0, 2000: 2, 1000: 2, 100: 2 } (остаток выдаётся в пределах доступного)
+```
+
+**Связанные вопросы:**
+
+<!-- Связанных вопросов нет -->
+
+<details>
+<summary>Решение</summary>
+
+```javascript
+// Задача 1: без ограничений
+function getMoney(amount) {
+  const nominals = [5000, 2000, 1000, 500, 100, 50];
+  const result = {};
+
+  for (const nominal of nominals) {
+    const count = Math.floor(amount / nominal);
+    result[nominal] = count;
+    amount -= count * nominal;
+  }
+
+  return result;
+}
+
+// Задача 2: с ограничениями
+function getMoney(amount, limits = {}) {
+  const nominals = [5000, 2000, 1000, 500, 100, 50];
+  const result = {};
+
+  for (const nominal of nominals) {
+    if (limits[nominal] === 0) continue; // номинал закончился
+    const maxAvailable = limits[nominal] !== undefined
+      ? limits[nominal]
+      : Infinity;
+    const count = Math.min(Math.floor(amount / nominal), maxAvailable);
+    if (count > 0) result[nominal] = count;
+    amount -= count * nominal;
+  }
+
+  return result;
+}
+
+console.log(getMoney(6200));                                   // { 5000: 1, 1000: 1, 100: 2 }
+console.log(getMoney(6200, { 5000: 0, 2000: 2, 1000: 7, 100: 5 })); // { 2000: 2, 1000: 2, 100: 2 }
 ```
 
 </details>

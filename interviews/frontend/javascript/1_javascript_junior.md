@@ -13,6 +13,8 @@
 - [Разница между function declaration и function expression?](#разница-между-function-declaration-и-function-expression)
 - [Что такое falsy-значения и приведение к булеву типу?](#что-такое-falsy-значения-и-приведение-к-булеву-типу)
 - [Что такое высшие функции (higher-order functions)?](#что-такое-высшие-функции-higher-order-functions)
+- [Что такое NaN и почему NaN !== NaN?](#что-такое-nan-и-почему-nan--nan)
+- [Неочевидные [приведения типов]: typeof null, 0.1 + 0.2, [] + {}](#неочевидные-приведения-типов-typeof-null-01--02---)
 
 ---
 
@@ -298,3 +300,73 @@ triple(5); // 15
 **Материалы для изучения:**
 
 - [MDN: Функции высшего порядка](https://developer.mozilla.org/ru/docs/Glossary/First-class_Function)
+
+---
+
+## Что такое NaN и почему NaN !== NaN?
+
+`NaN` (Not a Number) — специальное числовое значение JavaScript, означающее результат невалидной числовой операции. Имеет три особенности:
+
+1. `typeof NaN === 'number'` — это тип `number`, смотря на название
+2. `NaN !== NaN` — **единственное** значение JS, не равное самому себе
+3. Проверять наличие NaN нужно через `Number.isNaN()` или `isNaN()`
+
+```javascript
+typeof NaN        // "number"
+NaN === NaN       // false
+NaN !== NaN       // true
+Math.sqrt(-1)     // NaN
+
+// Неправильный способ проверки
+if (value === NaN) { ... } // никогда не выполнится!
+
+// Правильные способы
+Number.isNaN(NaN) // true  (не приводит аргумент)
+isNaN('hello')    // true  (сначала приводит к number!)
+Number.isNaN('hello') // false
+
+// Через Object.is (ES6)
+Object.is(NaN, NaN) // true
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: NaN](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/NaN)
+
+---
+
+## Неочевидные приведения типов: typeof null, 0.1 + 0.2, [] + {}
+
+Несколько классических подвохов JavaScript, с которыми часто спрашивают на интервью:
+
+```javascript
+// 1. typeof null — историческая ошибка в JS
+typeof null === 'object' // true (но null не объект!)
+typeof undefined === 'undefined' // true
+
+// 2. Плавающая точка (IEEE 754)
+0.1 + 0.2 === 0.3 // false !
+0.1 + 0.2         // 0.30000000000000004
+// Решение: сравнивать через погрешность или Number.EPSILON
+Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON // true
+
+// 3. [] + {} вс. {} + []
+[] + {}  // "[object Object]"  — массив в "", объект в "[object Object]"
+{} + []  // 0  — считается блоком кода, +[] == 0
+
+// 4. Невероятные сравнения с приведением
+1 < 2 < 3  // true  (1<2=true, true<3 = 1<3 = true)
+3 > 2 > 1  // false (3>2=true, true>1 = 1>1 = false!)
+```
+
+Итог: в коде производства серьёзных приложений всегда используй `===` вместо `==`, для чисел с плавающей точкой используй `Number.EPSILON`, проверку на NaN делай через `Number.isNaN()`.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Number.EPSILON](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Number/EPSILON)

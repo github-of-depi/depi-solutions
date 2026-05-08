@@ -13,6 +13,8 @@
 - [Глубокое vs поверхностное копирование объектов?](#глубокое-vs-поверхностное-копирование-объектов)
 - [Как работает цикл событий (event loop)?](#как-работает-цикл-событий-event-loop)
 - [Что такое debounce и throttle?](#что-такое-debounce-и-throttle)
+- [В чём разница между hasOwnProperty и оператором in?](#в-чём-разница-между-hasownproperty-и-оператором-in)
+- [Что возвращает ['1','7','11'].map(parseInt) и почему?](#что-возвращает-1711mapparseint-и-почему)
 
 ---
 
@@ -384,3 +386,81 @@ const onScroll = throttle(() => updateHeader(), 100);
 **Материалы для изучения:**
 
 - [MDN: setTimeout](https://developer.mozilla.org/ru/docs/Web/API/setTimeout)
+
+---
+
+## В чём разница между hasOwnProperty и оператором in?
+
+Оба способа проверяют наличие свойства в объекте, но с разным охватом:
+
+- **`in`** — проверяет и собственные свойства, и **унаследованные** через цепочку прототипов.
+- **`hasOwnProperty`** — проверяет **только собственные** свойства объекта, унаследованные игнорирует.
+
+```javascript
+class Animal {
+  constructor(name) { this.name = name; }
+  sound() { console.log("..."); }
+}
+
+class Dog extends Animal {
+  constructor(name) { super(name); this.breed = "Lab"; }
+  bark() { console.log("Woof!"); }
+}
+
+const dog = new Dog("Buddy");
+
+dog.hasOwnProperty('name');  // true  — name задано в конструкторе
+dog.hasOwnProperty('breed'); // true  — breed задано в конструкторе Dog
+dog.hasOwnProperty('sound'); // false — sound на прототипе Animal
+dog.hasOwnProperty('bark');  // false — bark на прототипе Dog
+
+'name'  in dog; // true
+'sound' in dog; // true  — унаследовано, но in его видит!
+'bark'  in dog; // true
+```
+
+**Современная альтернатива:** `Object.hasOwn(obj, key)` — стандартный способ без необходимости вызывать метод через прототип.
+
+```javascript
+// Безопаснее, чем hasOwnProperty (работает даже если метод переопределён)
+Object.hasOwn(dog, 'name'); // true
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Object.hasOwn](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn)
+
+---
+
+## Что возвращает ['1','7','11'].map(parseInt) и почему?
+
+Результат: `[1, NaN, 3]` — и это классическая ловушка JavaScript.
+
+Метод `Array.prototype.map` передаёт в колбэк **три аргумента**: `(элемент, индекс, массив)`. Функция `parseInt(string, radix)` принимает два аргумента: строку и **основание системы счисления**.
+
+```javascript
+['1', '7', '11'].map(parseInt)
+// Раскрывается как:
+// parseInt('1',  0)  → 1   (radix=0 → используется 10)
+// parseInt('7',  1)  → NaN (единичная система счисления не имеет цифры 7)
+// parseInt('11', 2)  → 3   (двоичное 11 = десятичное 3)
+```
+
+Чтобы корректно преобразовать строки в числа:
+
+```javascript
+['1', '7', '11'].map(Number);        // [1, 7, 11]
+['1', '7', '11'].map(n => parseInt(n, 10)); // [1, 7, 11]
+```
+
+**Вывод:** никогда не передавай функции с необязательными параметрами напрямую в `map/filter/forEach` без обёртки — лишние аргументы могут изменить поведение.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: parseInt](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/parseInt)
