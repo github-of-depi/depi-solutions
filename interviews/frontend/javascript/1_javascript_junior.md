@@ -10,6 +10,9 @@
 - [Что такое hoisting?](#что-такое-hoisting)
 - [Что такое Temporal Dead Zone?](#что-такое-temporal-dead-zone)
 - [Что делают typeof и instanceof?](#что-делают-typeof-и-instanceof)
+- [Разница между function declaration и function expression?](#разница-между-function-declaration-и-function-expression)
+- [Что такое falsy-значения и приведение к булеву типу?](#что-такое-falsy-значения-и-приведение-к-булеву-типу)
+- [Что такое высшие функции (higher-order functions)?](#что-такое-высшие-функции-higher-order-functions)
 
 ---
 
@@ -203,3 +206,95 @@ typeof Symbol()   // "symbol"
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Разница между function declaration и function expression?
+
+**Function declaration** — объявление через ключевое слово `function` в позиции инструкции. Полностью поднимается (hoisting): вызвать можно до объявления в коде.
+
+**Function expression** — присвоение функции переменной или передача как аргумента. Не поднимается (поднимается только переменная, но без значения).
+
+```javascript
+// Function declaration — можно вызвать ДО объявления
+greet(); // "Hello"
+function greet() { console.log("Hello"); }
+
+// Function expression — нельзя вызвать до присвоения
+sayHi(); // TypeError: sayHi is not a function
+const sayHi = function() { console.log("Hi"); };
+
+// Named function expression (имя видно только внутри)
+const factorial = function fact(n) {
+  return n <= 1 ? 1 : n * fact(n - 1);
+};
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Function declaration](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Statements/function)
+
+---
+
+## Что такое falsy-значения и приведение к булеву типу?
+
+Falsy-значения — значения, которые приводятся к `false` в булевом контексте. В JavaScript их ровно **8**: `false`, `0`, `-0`, `0n` (BigInt нуль), `""` (пустая строка), `null`, `undefined`, `NaN`. Всё остальное — truthy, включая `[]`, `{}`, `"0"`, `"false"`.
+
+Оператор `!!` — двойное отрицание, явное приведение к `boolean`:
+
+```javascript
+!!0        // false
+!!""       // false
+!!null     // false
+!!undefined // false
+
+!![]       // true — пустой массив truthy!
+!!{}       // true — пустой объект truthy!
+!!"0"      // true — непустая строка truthy!
+
+// Практичный паттерн
+const isLoggedIn = Boolean(user?.id);
+const hasItems  = !!cart.items.length;
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Falsy](https://developer.mozilla.org/ru/docs/Glossary/Falsy)
+
+---
+
+## Что такое высшие функции (higher-order functions)?
+
+Высшая функция (Higher-Order Function, HOF) — функция, которая принимает другую функцию как аргумент или возвращает функцию. Это основа функционального программирования в JS.
+
+```javascript
+// Принимает функцию как аргумент
+[1, 2, 3].map(x => x * 2);    // [2, 4, 6]
+[1, 2, 3].filter(x => x > 1); // [2, 3]
+[1, 2, 3].reduce((acc, x) => acc + x, 0); // 6
+
+// Возвращает функцию (фабрика функций)
+function multiplier(factor) {
+  return (number) => number * factor;
+}
+
+const double = multiplier(2);
+const triple = multiplier(3);
+
+double(5); // 10
+triple(5); // 15
+```
+
+**Связанные задачи:**
+
+- [Функция capitalize](../../../tasks/frontend/javascript/1_javascript_junior.md#функция-capitalize)
+
+**Материалы для изучения:**
+
+- [MDN: Функции высшего порядка](https://developer.mozilla.org/ru/docs/Glossary/First-class_Function)

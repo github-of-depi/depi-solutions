@@ -9,6 +9,10 @@
 - [Стрелочные функции vs обычные: полное сравнение?](#стрелочные-функции-vs-обычные-полное-сравнение)
 - [Ключевые нововведения ES6+?](#ключевые-нововведения-es6)
 - [Что такое деструктуризация, spread и rest?](#что-такое-деструктуризация-spread-и-rest)
+- [Как работают call, apply и bind?](#как-работают-call-apply-и-bind)
+- [Глубокое vs поверхностное копирование объектов?](#глубокое-vs-поверхностное-копирование-объектов)
+- [Как работает цикл событий (event loop)?](#как-работает-цикл-событий-event-loop)
+- [Что такое debounce и throttle?](#что-такое-debounce-и-throttle)
 
 ---
 
@@ -234,3 +238,149 @@ log("info", "hello", "world"); // messages = ["hello", "world"]
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Как работают call, apply и bind?
+
+Все три метода позволяют явно задать `this` для функции, но применяются по-разному.
+
+- **`call(thisArg, arg1, arg2, ...)`** — вызывает функцию немедленно, аргументы перечисляются через запятую.
+- **`apply(thisArg, [args])`** — вызывает функцию немедленно, аргументы передаются массивом.
+- **`bind(thisArg, arg1, ...)`** — возвращает новую функцию с привязанным `this` (и опционально первыми аргументами), вызов отложен.
+
+```javascript
+function greet(greeting, punctuation) {
+  return `${greeting}, ${this.name}${punctuation}`;
+}
+
+const user = { name: "Alice" };
+
+greet.call(user, "Привет", "!");    // "Привет, Alice!"
+greet.apply(user, ["Привет", "!"]); // "Привет, Alice!"
+
+const boundGreet = greet.bind(user, "Привет");
+boundGreet("?"); // "Привет, Alice?"
+
+// Практический кейс: заимствование метода
+const arrayLike = { 0: "a", 1: "b", length: 2 };
+Array.prototype.slice.call(arrayLike); // ["a", "b"]
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Function.prototype.bind](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)
+
+---
+
+## Глубокое vs поверхностное копирование объектов?
+
+**Поверхностная копия (shallow copy)** — копируются только свойства первого уровня. Вложенные объекты копируются по ссылке, поэтому изменение вложенного объекта в копии влияет на оригинал.
+
+**Глубокая копия (deep copy)** — рекурсивно копируются все уровни вложенности.
+
+```javascript
+const original = { a: 1, nested: { b: 2 } };
+
+// Поверхностная — через Object.assign или spread
+const shallow = { ...original };
+shallow.nested.b = 99; // меняет и original.nested.b!
+
+// Глубокая — через structuredClone (современный способ)
+const deep = structuredClone(original);
+deep.nested.b = 99; // original.nested.b не изменится
+
+// Альтернатива: JSON.parse(JSON.stringify(...))
+// Не работает с: undefined, функциями, Date, Map, Set, RegExp, circular refs
+const jsonCopy = JSON.parse(JSON.stringify(original));
+```
+
+**Когда что использовать:** shallow copy дешевле, подходит для плоских объектов и иммутабельных обновлений состояния (Redux-паттерн). `structuredClone` — для глубокого копирования с поддержкой большинства типов данных.
+
+**Связанные задачи:**
+
+- [Глубокое копирование объекта](../../../tasks/frontend/javascript/2_javascript_middle.md#глубокое-копирование-объекта)
+
+**Материалы для изучения:**
+
+- [MDN: structuredClone](https://developer.mozilla.org/ru/docs/Web/API/structuredClone)
+
+---
+
+## Как работает цикл событий (event loop)?
+
+JavaScript — однопоточный язык. Event loop — механизм, позволяющий выполнять асинхронный код без блокировки потока.
+
+**Очереди задач:**
+- **Call stack** — синхронный код, выполняется немедленно.
+- **Microtask queue** — Promise-колбэки (`.then`, `.catch`), `queueMicrotask`, `MutationObserver`. Опустошается **полностью** после каждого шага event loop, перед следующей макрозадачей.
+- **Macrotask queue (task queue)** — `setTimeout`, `setInterval`, события ввода/вывода. Выбирается по одной задаче за итерацию.
+
+```javascript
+console.log("1"); // sync
+
+setTimeout(() => console.log("2"), 0); // macrotask
+
+Promise.resolve().then(() => console.log("3")); // microtask
+
+console.log("4"); // sync
+
+// Вывод: 1 → 4 → 3 → 2
+```
+
+**Порядок:** сначала весь синхронный код → все микрозадачи → одна макрозадача → снова все микрозадачи → ...
+
+**Связанные задачи:**
+
+- [Порядок вывода в event loop](../../../tasks/frontend/javascript/2_javascript_middle.md#порядок-вывода-в-event-loop)
+
+**Материалы для изучения:**
+
+- [MDN: Event loop](https://developer.mozilla.org/ru/docs/Web/JavaScript/Event_loop)
+
+---
+
+## Что такое debounce и throttle?
+
+Оба паттерна ограничивают частоту вызова функции, но по-разному.
+
+**Debounce** — откладывает вызов до тех пор, пока между событиями не пройдёт заданная пауза. Подходит для поиска по вводу, авторезмера окна.
+
+**Throttle** — гарантирует вызов не чаще, чем раз в N мс. Подходит для обработки скролла, mousemove.
+
+```javascript
+// Debounce
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+const onSearch = debounce((query) => fetchResults(query), 300);
+
+// Throttle
+function throttle(fn, limit) {
+  let lastCall = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastCall >= limit) {
+      lastCall = now;
+      return fn.apply(this, args);
+    }
+  };
+}
+
+const onScroll = throttle(() => updateHeader(), 100);
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: setTimeout](https://developer.mozilla.org/ru/docs/Web/API/setTimeout)
