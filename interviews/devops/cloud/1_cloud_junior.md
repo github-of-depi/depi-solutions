@@ -1,0 +1,32 @@
+﻿# Cloud — Junior
+
+## Вопросы
+
+- [Что такое CDN?](#что-такое-cdn)
+- [Что такое Vercel и Netlify?](#что-такое-vercel-и-netlify)
+- [Что такое статический хостинг?](#что-такое-статический-хостинг)
+- [Что такое environment variables в облаке?](#что-такое-environment-variables-в-облаке)
+
+---
+
+## Что такое CDN?
+
+CDN (Content Delivery Network) — сеть серверов по всему миру. Статические ресурсы отдаются с ближайшего к пользователю. Меньше latency, разгрузка origin. Cloudflare, Fastly, AWS CloudFront.
+
+---
+
+## Что такое Vercel и Netlify?
+
+Managed платформы для деплоя фронтенд приложений. Автоматический деплой из Git, preview deployments, CDN, serverless functions. Vercel — особая интеграция с Next.js. Netlify — широкая поддержка фреймворков.
+
+---
+
+## Что такое статический хостинг?
+
+Hosting для статических файлов (HTML, CSS, JS): AWS S3 + CloudFront, GitHub Pages, Firebase Hosting. Дёшево, надёжно, отлично масштабируется. Для SPA: redirect всех 404 → index.html.
+
+---
+
+## Что такое environment variables в облаке?
+
+Платформы (Vercel, Netlify, AWS) хранят env переменные отдельно от кода. Разные значения для preview/staging/production. Next.js: `NEXT_PUBLIC_*` — клиентские, остальные — только серверные.

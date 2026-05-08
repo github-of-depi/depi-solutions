@@ -1,0 +1,141 @@
+﻿# Browser — Junior
+
+## Вопросы
+
+- [Что происходит при вводе URL в браузере?](#что-происходит-при-вводе-url-в-браузере)
+- [Что такое DOM?](#что-такое-dom)
+- [Что такое event bubbling и capturing?](#что-такое-event-bubbling-и-capturing)
+- [Чем localStorage отличается от sessionStorage?](#чем-localstorage-отличается-от-sessionstorage)
+- [Что такое HTTPS и зачем он нужен?](#что-такое-https-и-зачем-он-нужен)
+- [Чем отличаются семантические теги HTML?](#чем-отличаются-семантические-теги-html)
+- [Что такое data-атрибуты?](#что-такое-data-атрибуты)
+- [Новые типы input в HTML5?](#новые-типы-input-в-html5)
+
+---
+
+## Что происходит при вводе URL в браузере?
+
+1. DNS lookup — hostname → IP адрес
+2. TCP соединение (TCP handshake)
+3. TLS handshake (для HTTPS)
+4. HTTP запрос (GET /)
+5. Сервер отвечает HTML
+6. Браузер парсит HTML → строит DOM
+7. Загружает CSS → строит CSSOM
+8. DOM + CSSOM → Render Tree → Layout → Paint → Composite
+
+---
+
+## Что такое DOM?
+
+DOM (Document Object Model) — API для работы с HTML документом в виде дерева объектов. Каждый HTML элемент — узел. JavaScript может изменять DOM: `querySelector`, `createElement`, `appendChild`, `addEventListener`. DOM строится из HTML браузером.
+
+---
+
+## Что такое event bubbling и capturing?
+
+**Bubbling** — событие сначала срабатывает на целевом элементе, затем поднимается к родителям (по умолчанию). **Capturing** (phase = true в addEventListener) — событие сначала проходит от корня к цели. `stopPropagation()` — остановить распространение. `stopImmediatePropagation()` — остановить и все обработчики на текущем элементе.
+
+---
+
+## Чем localStorage отличается от sessionStorage?
+
+`localStorage` — хранит данные постоянно (до явной очистки), доступны в новых вкладках того же origin. `sessionStorage` — только в рамках текущей вкладки/сессии, очищается при закрытии. Оба: строки, synchronous API, ~5MB, недоступны в Web Workers.
+
+---
+
+## Что такое HTTPS и зачем он нужен?
+
+HTTPS = HTTP + TLS шифрование. Обеспечивает: шифрование (нельзя прочитать трафик), аутентификацию (сертификат подтверждает домен), целостность (данные не изменены в пути). Без HTTPS: Service Workers, геолокация, камера, Push API недоступны. SEO-фактор у Google.
+
+---
+
+## Чем отличаются семантические теги HTML?
+
+Семантические теги сообщают браузеру и поисковикам **смысл** содержимого, а не только внешний вид.
+
+| Тег | Назначение |
+|-----|-----------|
+| `<div>` | Контейнер без семантики — только для стилей/скриптов |
+| `<section>` | Тематически связанный раздел с заголовком |
+| `<article>` | Самостоятельный, переиспользуемый контент (пост, статья, комментарий) |
+| `<aside>` | Второстепенный контент (боковая панель, реклама, связанные ссылки) |
+| `<header>` | Шапка страницы или раздела (логотип, навигация) |
+| `<footer>` | Подвал (авторство, контакты, ссылки) |
+| `<nav>` | Блок навигационных ссылок |
+| `<main>` | Основной уникальный контент страницы (один на страницу) |
+| `<figure>` / `<figcaption>` | Изображение/диаграмма с подписью |
+
+Зачем важно:
+- **Доступность (a11y)**: screen readers корректно читают структуру
+- **SEO**: поисковики лучше индексируют структурированный контент
+- **Читаемость кода**: понятна структура без CSS-классов
+
+---
+
+## Что такое data-атрибуты?
+
+Data-атрибуты (`data-*`) позволяют хранить произвольные данные прямо в HTML-элементе без нестандартных атрибутов.
+
+```html
+<button
+  data-user-id="42"
+  data-action="delete"
+  data-confirm="true"
+>
+  Удалить пользователя
+</button>
+```
+
+```javascript
+const btn = document.querySelector("button");
+
+// Чтение через dataset (camelCase):
+btn.dataset.userId;   // "42"
+btn.dataset.action;   // "delete"
+btn.dataset.confirm;  // "true" (всегда строка!)
+
+// Запись:
+btn.dataset.status = "loading";
+// Результат: data-status="loading"
+
+// getAttribute — альтернатива:
+btn.getAttribute("data-user-id"); // "42"
+
+// CSS-селектор по data-атрибуту:
+// [data-action="delete"] { color: red; }
+```
+
+Применение: передача ID/конфигурации в обработчики событий, атрибуты для тестирования (`data-testid`), state-маркеры без лишних классов.
+
+---
+
+## Новые типы input в HTML5?
+
+HTML5 добавил специализированные типы `<input>` с нативной валидацией и UI:
+
+```html
+<!-- Данные пользователя -->
+<input type="email"  placeholder="user@example.com">  <!-- валидирует @ -->
+<input type="tel"    placeholder="+7 999 123-45-67">  <!-- телефонная клавиатура на mobile -->
+<input type="url"    placeholder="https://example.com">
+<input type="number" min="0" max="100" step="5">
+<input type="search">  <!-- кнопка очистки в браузере -->
+
+<!-- Дата и время -->
+<input type="date">        <!-- date picker -->
+<input type="time">
+<input type="datetime-local">
+<input type="week">
+<input type="month">
+
+<!-- Специальные -->
+<input type="range"  min="0" max="100" value="50">  <!-- слайдер -->
+<input type="color"  value="#ff5733">               <!-- color picker -->
+<input type="file"   accept=".pdf,.docx" multiple>
+
+<!-- Менее известные -->
+<input type="hidden" name="csrf_token" value="abc123">  <!-- скрытое поле -->
+```
+
+Преимущества: нативная валидация (без JS), правильная клавиатура на мобильных, встроенные пикеры, поддержка `required`, `min`, `max`, `pattern`. Поведение может отличаться между браузерами.

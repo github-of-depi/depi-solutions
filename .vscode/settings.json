@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "Set-Content": true,
+        "Group-Object": true,
+        "New-Item": true,
+        "Out-Null": true
+    }
+}

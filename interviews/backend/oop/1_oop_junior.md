@@ -1,0 +1,67 @@
+﻿# ООП — Junior
+
+## Вопросы
+
+- [Что такое ООП и его принципы?](#что-такое-ооп-и-его-принципы)
+- [Что такое класс и объект?](#что-такое-класс-и-объект)
+- [Что такое наследование?](#что-такое-наследование)
+- [Что такое инкапсуляция?](#что-такое-инкапсуляция)
+- [Что такое полиморфизм?](#что-такое-полиморфизм)
+
+---
+
+## Что такое ООП и его принципы?
+
+ООП — парадигма программирования, основанная на объектах. 4 принципа: **Инкапсуляция** (скрытие деталей), **Наследование** (расширение классов), **Полиморфизм** (разное поведение через единый интерфейс), **Абстракция** (скрытие сложности).
+
+---
+
+## Что такое класс и объект?
+
+Класс — шаблон для создания объектов. Объект — экземпляр класса.
+
+```typescript
+class User {
+  constructor(
+    public readonly id: string,
+    private name: string,
+    private email: string
+  ) {}
+  
+  getName(): string { return this.name; }
+  updateEmail(email: string): void { this.email = email; }
+}
+
+const user = new User("1", "Alice", "alice@example.com");
+```
+
+---
+
+## Что такое наследование?
+
+Наследование позволяет классу расширять другой класс. `extends` в TypeScript. Дочерний класс получает всё публичное и protected от родителя.
+
+```typescript
+class Animal { speak(): string { return "..."; } }
+class Dog extends Animal { speak(): string { return "Woof!"; } }
+class Cat extends Animal { speak(): string { return "Meow!"; } }
+```
+
+---
+
+## Что такое инкапсуляция?
+
+Инкапсуляция — скрытие внутреннего состояния через модификаторы доступа. `private` — только внутри класса. `protected` — + дочерние классы. `public` — везде.
+
+---
+
+## Что такое полиморфизм?
+
+Полиморфизм — объекты разных типов обрабатываются через единый интерфейс. Метод ведёт себя по-разному в зависимости от типа объекта.
+
+```typescript
+interface Shape { area(): number; }
+class Circle implements Shape { area() { return Math.PI * this.r ** 2; } }
+class Square implements Shape { area() { return this.side ** 2; } }
+function totalArea(shapes: Shape[]) { return shapes.reduce((sum, s) => sum + s.area(), 0); }
+```

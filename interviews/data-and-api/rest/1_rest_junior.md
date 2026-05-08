@@ -1,0 +1,66 @@
+﻿# REST — Junior
+
+## Вопросы
+
+- [Что такое REST?](#что-такое-rest)
+- [Какие HTTP методы существуют?](#какие-http-методы-существуют)
+- [Что означают HTTP статус коды?](#что-означают-http-статус-коды)
+- [Как сделать HTTP запрос в браузере?](#как-сделать-http-запрос-в-браузере)
+- [Что такое JSON?](#что-такое-json)
+- [Что такое CORS?](#что-такое-cors)
+
+---
+
+## Что такое REST?
+
+REST (Representational State Transfer) — архитектурный стиль для API: ресурсы адресуются через URL, действия — через HTTP методы, ответы — в JSON/XML. Принципы: stateless (каждый запрос самодостаточен), uniform interface, cacheable.
+
+---
+
+## Какие HTTP методы существуют?
+
+- `GET` — получить ресурс (идемпотентный)
+- `POST` — создать ресурс
+- `PUT` — заменить ресурс полностью
+- `PATCH` — частично обновить
+- `DELETE` — удалить
+- `OPTIONS` — узнать разрешённые методы (CORS preflight)
+
+---
+
+## Что означают HTTP статус коды?
+
+- **2xx** — успех: `200 OK`, `201 Created`, `204 No Content`
+- **3xx** — редирект: `301 Moved Permanently`, `304 Not Modified`
+- **4xx** — ошибка клиента: `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `422 Unprocessable Entity`
+- **5xx** — ошибка сервера: `500 Internal Server Error`, `503 Service Unavailable`
+
+---
+
+## Как сделать HTTP запрос в браузере?
+
+```typescript
+// Fetch API (встроен)
+const response = await fetch("/api/users");
+if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+const users = await response.json();
+
+// С данными
+const res = await fetch("/api/users", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name: "Alice" }),
+});
+```
+
+---
+
+## Что такое JSON?
+
+JSON (JavaScript Object Notation) — текстовый формат обмена данными. Поддерживает: объекты, массивы, строки, числа, boolean, null. `JSON.stringify()` — объект в строку, `JSON.parse()` — строка в объект.
+
+---
+
+## Что такое CORS?
+
+CORS — браузерный механизм безопасности: запросы к другому origin (домен, протокол или порт) блокируются, если сервер не вернул заголовок `Access-Control-Allow-Origin`. Только браузер соблюдает CORS — curl/postman не проверяют.

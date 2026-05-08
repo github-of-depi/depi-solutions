@@ -1,0 +1,36 @@
+﻿# Feature-Sliced Design — Expert
+
+## Вопросы
+
+- [Как масштабировать FSD в монорепозитории?](#как-масштабировать-fsd-в-монорепозитории)
+- [Как комбинировать FSD с micro-frontends?](#как-комбинировать-fsd-с-micro-frontends)
+- [Как строить автоматическую валидацию архитектуры?](#как-строить-автоматическую-валидацию-архитектуры)
+
+---
+
+## Как масштабировать FSD в монорепозитории?
+
+В монорепо каждое приложение — полноценная FSD структура. Общий код между apps → выносить в пакеты (packages/ui, packages/entities). Пакеты не следуют FSD (это shared библиотеки). Turborepo: управление зависимостями и сборкой.
+
+---
+
+## Как комбинировать FSD с micro-frontends?
+
+Каждый micro-frontend — отдельное приложение с своей FSD структурой. Shell (host) app: минимальный FSD, в основном app + pages слой с МFE интеграцией. Shared пакеты (design system, utilities) — отдельные npm пакеты, не FSD слои.
+
+---
+
+## Как строить автоматическую валидацию архитектуры?
+
+1. **eslint-plugin-fsd** — в CI, PR checks
+2. **Dependency cruiser** — визуализация и валидация зависимостей
+3. **Custom eslint rules** — специфичные правила проекта
+4. **Architecture tests** — ts-arch или custom jest тесты на запрещённые импорты
+
+```typescript
+// Пример архитектурного теста
+import { tsArch } from "ts-arch";
+it("features не должны импортировать из pages", () => {
+  expect("src/features/**/*.ts").not.toImport("src/pages/**/*.ts");
+});
+```
