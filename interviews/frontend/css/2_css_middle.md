@@ -9,6 +9,9 @@
 - [Что такое stacking context и как он создаётся?](#что-такое-stacking-context-и-как-он-создаётся)
 - [Как работает адаптивная вёрстка?](#как-работает-адаптивная-вёрстка)
 - [Что такое CSS container queries?](#что-такое-css-container-queries)
+- [Что такое схлопывание отступов (margin collapsing)?](#что-такое-схлопывание-отступов-margin-collapsing)
+- [Что такое псевдокласс :has()?](#что-такое-псевдокласс-has)
+- [Что такое медиафункция prefers-reduced-motion?](#что-такое-медиафункция-prefers-reduced-motion)
 
 ---
 
@@ -143,3 +146,85 @@ Container queries позволяют применять стили в завис
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Что такое схлопывание отступов (margin collapsing)?
+
+Когда вертикальные `margin` двух соседних блочных элементов или родителя и первого/последнего ребёнка соприкасаются, они объединяются в один — равный наибольшему из двух. Это называется схлопыванием.
+
+Схлопывание **не происходит** в: flex-контейнерах, grid-контейнерах, элементах с `overflow` ≠ `visible`, элементах с `display: flow-root` (создающих BFC).
+
+```css
+/* Два соседних абзаца: margin 24px + 16px → итого 24px (не 40px) */
+p { margin-bottom: 24px; }
+p + p { margin-top: 16px; }
+
+/* Отключить схлопывание родитель–ребёнок */
+.parent { overflow: hidden; } /* или padding-top: 1px; или display: flow-root */
+```
+
+**Связанные задачи:**
+
+- [Схлопывание отступов](../../../tasks/frontend/css/2_css_middle.md#схлопывание-отступов)
+
+**Материалы для изучения:**
+
+- [MDN: Схлопывание внешних отступов](https://developer.mozilla.org/ru/docs/Web/CSS/CSS_box_model/Mastering_margin_collapsing)
+
+---
+
+## Что такое псевдокласс :has()?
+
+`:has()` — «родительский» псевдокласс: применяет стили к элементу, если внутри него содержится совпадающий потомок. Впервые позволяет стилизовать родителя, опираясь на состояние дочернего элемента.
+
+```css
+/* Карточка с изображением получает другой padding */
+.card:has(img) { padding: 0; }
+
+/* Форма без валидных полей */
+form:has(input:invalid) .submit-btn { opacity: 0.5; pointer-events: none; }
+
+/* label подсвечивается когда связанный checkbox отмечен */
+label:has(+ input:checked) { font-weight: bold; color: blue; }
+```
+
+`:has()` поддерживается во всех современных браузерах с 2023 года.
+
+**Связанные задачи:**
+
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: :has()](https://developer.mozilla.org/ru/docs/Web/CSS/:has)
+
+---
+
+## Что такое медиафункция prefers-reduced-motion?
+
+`prefers-reduced-motion` — медиазапрос, который определяет, что пользователь в настройках системы запросил минимум анимаций (важно для людей с вестибулярными расстройствами). При значении `reduce` нужно отключать или сильно упрощать анимации.
+
+```css
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.modal { animation: slideIn 0.4s ease; }
+
+/* Отключаем анимацию по запросу пользователя */
+@media (prefers-reduced-motion: reduce) {
+  .modal { animation: none; }
+  * { transition-duration: 0.01ms !important; }
+}
+```
+
+**Связанные задачи:**
+
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: prefers-reduced-motion](https://developer.mozilla.org/ru/docs/Web/CSS/@media/prefers-reduced-motion)
+- [web.dev: prefers-reduced-motion](https://web.dev/articles/prefers-reduced-motion)

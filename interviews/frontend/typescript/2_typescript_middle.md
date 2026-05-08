@@ -13,6 +13,7 @@
 - [extends vs implements — в чём разница?](#extends-vs-implements--в-чём-разница)
 - [Union vs intersection типы?](#union-vs-intersection-типы)
 - [Что такое модули в TypeScript?](#что-такое-модули-в-typescript)
+- [Что такое декораторы в TypeScript?](#что-такое-декораторы-в-typescript)
 
 ---
 
@@ -126,7 +127,9 @@ type ConfigKeys = keyof typeof config; // "host" | "port"
 ```
 
 **Связанные задачи:**
-<!-- Связанных задач нет -->
+
+- [Тип из ключей объекта](../../../tasks/frontend/typescript/2_typescript_middle.md#тип-из-ключей-объекта)
+- [Типизация функции getProperty](../../../tasks/frontend/typescript/2_typescript_middle.md#типизация-функции-getproperty)
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
@@ -151,7 +154,9 @@ type Getters<T> = {
 ```
 
 **Связанные задачи:**
-<!-- Связанных задач нет -->
+
+- [Реализация Partial](../../../tasks/frontend/typescript/2_typescript_middle.md#реализация-partial)
+- [Реализация Pick](../../../tasks/frontend/typescript/2_typescript_middle.md#реализация-pick)
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
@@ -311,3 +316,53 @@ TypeScript модули компилируются в CJS или ESM в зави
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Что такое декораторы в TypeScript?
+
+Декоратор — это функция, применяемая через `@` к классам, методам, свойствам или параметрам для изменения их поведения. Декораторы являются частью спецификации ECMAScript (Stage 3) и находят широкое применение в NestJS, Angular, TypeORM, inversify.
+
+Виды декораторов:
+
+- **Class decorator** — принимает конструктор класса
+- **Method decorator** — принимает `target`, `propertyKey`, `descriptor`
+- **Property decorator** — принимает `target`, `propertyKey`
+- **Parameter decorator** — принимает `target`, `propertyKey`, `parameterIndex`
+
+```typescript
+// Method decorator — логирование вызовов
+function Log(target: object, key: string, descriptor: PropertyDescriptor) {
+  const original = descriptor.value;
+  descriptor.value = function (...args: unknown[]) {
+    console.log(`Calling ${key} with`, args);
+    return original.apply(this, args);
+  };
+  return descriptor;
+}
+
+class UserService {
+  @Log
+  findById(id: number) {
+    return { id, name: "Alice" };
+  }
+}
+
+// Class decorator — добавляет метаданные
+function Injectable(target: Function) {
+  Reflect.defineMetadata("injectable", true, target);
+}
+
+@Injectable
+class AuthService {}
+```
+
+> **Prerequisite**: для использования декораторов с `reflect-metadata` необходимо: `"experimentalDecorators": true, "emitDecoratorMetadata": true` в `tsconfig.json`.
+
+**Связанные задачи:**
+
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [TypeScript: Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html)

@@ -2,6 +2,7 @@
 
 ## Вопросы
 
+- [Что такое TypeScript и зачем он нужен?](#что-такое-typescript-и-зачем-он-нужен)
 - [В чём разница между type и interface?](#в-чём-разница-между-type-и-interface)
 - [Что такое any, unknown и never?](#что-такое-any-unknown-и-never)
 - [Что такое type assertion?](#что-такое-type-assertion)
@@ -12,6 +13,34 @@
 - [Что такое модификаторы доступа?](#что-такое-модификаторы-доступа)
 - [Что такое геттеры и сеттеры?](#что-такое-геттеры-и-сеттеры)
 - [Что такое абстрактные классы?](#что-такое-абстрактные-классы)
+- [Что такое noImplicitAny и зачем включать strict?](#что-такое-noimplicitany-и-зачем-включать-strict)
+
+---
+
+## Что такое TypeScript и зачем он нужен?
+
+TypeScript — надмножество JavaScript с опциональной статической типизацией, разработанное Microsoft. Код на TypeScript компилируется в JavaScript. Ключевые преимущества: ошибки обнаруживаются до запуска (на этапе компиляции), улучшается автодополнение в IDE, рефакторинг становится безопаснее, код самодокументируется через типы.
+
+Основные составляющие TypeScript: **язык** (синтаксис + система типов), **компилятор** (`tsc`), **language server** (для IDE-интеграции).
+
+Главный минус — дополнительный шаг сборки и необходимость писать типы, что замедляет старт. В маленьких проектах или прототипах overhead может не окупаться.
+
+```typescript
+// JavaScript
+function add(a, b) { return a + b; } // a и b — any, ошибка только в рантайме
+
+// TypeScript
+function add(a: number, b: number): number { return a + b; }
+add(1, "2"); // TS Error: Argument of type 'string' is not assignable to parameter of type 'number'
+```
+
+**Связанные задачи:**
+
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [TypeScript: официальная документация](https://www.typescriptlang.org/docs/handbook/intro.html)
 
 ---
 
@@ -264,3 +293,40 @@ new Circle("red", 5); // OK
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Что такое noImplicitAny и зачем включать strict?
+
+`noImplicitAny` запрещает TypeScript неявно выводить тип `any`, когда тип не может быть определён. Без этой опции код вроде `function f(x) { return x.toUpperCase(); }` молча компилируется, хотя `x` фактически `any`. Включение `noImplicitAny` требует явно аннотировать все места, где тип неясен — это устраняет главный источник «дыр» в типизации.
+
+`"strict": true` в `tsconfig.json` — мета-флаг, включающий группу строгих проверок: `noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`, `strictPropertyInitialization` и другие. Рекомендуется включать в любом новом проекте.
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  }
+}
+```
+
+```typescript
+// noImplicitAny: true
+function greet(name) {        // TS Error: Parameter 'name' implicitly has an 'any' type
+  return "Hello, " + name;
+}
+
+function greet(name: string) { // OK
+  return "Hello, " + name;
+}
+```
+
+**Связанные задачи:**
+
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [TypeScript: tsconfig reference — strict](https://www.typescriptlang.org/tsconfig#strict)

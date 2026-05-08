@@ -10,6 +10,7 @@
 - [Что такое Web Storage vs Cookies vs IndexedDB?](#что-такое-web-storage-vs-cookies-vs-indexeddb)
 - [Что такое requestAnimationFrame?](#что-такое-requestanimationframe)
 - [Canvas vs SVG — в чём разница?](#canvas-vs-svg--в-чём-разница)
+- [Фазы рендеринга браузера и почему transform быстрее top/left?](#фазы-рендеринга-браузера-и-почему-transform-быстрее-topleft)
 
 ---
 
@@ -152,3 +153,44 @@ CORS (Cross-Origin Resource Sharing) — браузерный механизм �
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Фазы рендеринга браузера и почему transform быстрее top/left?
+
+Browser rendering pipeline состоит из пяти этапов:
+
+1. **Style** — браузер вычисляет computed styles для каждого элемента
+2. **Layout** — определяет позицию и размер каждого элемента (reflow). Самый дорогой.
+3. **Paint** — заполняет пиксельные буферы (repaint). Дороже.
+4. **Composite** — совмещает слои (лейеры). Дешевое (GPU).
+
+**Почему `top`/`left` медленнее:**
+
+Изменение `top`/`left` триггерит **layout → paint → composite** — весь пайплайн целиком.
+
+`transform: translate()` триггерит только **composite** — операция выполняется целиком на GPU, не затрагивая основной поток.
+
+```css
+/* Медленно: layout + paint + composite */
+.slow {
+  position: absolute;
+  transition: top 0.3s, left 0.3s;
+}
+
+/* Быстро: только composite (GPU) */
+.fast {
+  transition: transform 0.3s;
+  will-change: transform; /* продвигает элемент на отдельный GPU-слой */
+}
+```
+
+**CSS-свойства, не триггерирующие layout:** `transform`, `opacity`, `filter`. Самое большое влияние на производительность оказывает **уменьшение layout thrashing** — избегай попеременного чтения и записи геометрических свойств (offsetWidth, getBoundingClientRect + style).
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: CSS will-change](https://developer.mozilla.org/ru/docs/Web/CSS/will-change)
+- [web.dev: Rendering performance](https://web.dev/rendering-performance/)

@@ -10,6 +10,8 @@
 - [Прототипная цепочка в JavaScript?](#прототипная-цепочка-в-javascript)
 - [Что такое Big O нотация?](#что-такое-big-o-нотация)
 - [Генераторы и итераторы?](#генераторы-и-итераторы)
+- [Чем отличаются Promise.all, allSettled, race, any?](#чем-отличаются-promiseall-allsettled-race-any)
+- [Что такое мемоизация и для чего она нужна?](#что-такое-мемоизация-и-для-чего-она-нужна)
 
 ---
 
@@ -284,3 +286,76 @@ gen.next().value; // 2
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Чем отличаются Promise.all, allSettled, race, any?
+
+Все четыре метода принимают массив промисов, но по-разному реагируют на ошибки и успехи:
+
+| Метод | Резолвится | Реджектится |
+|---|---|---|
+| `Promise.all` | когда все выполнились | при первой ошибке |
+| `Promise.allSettled` | когда все завершились (любой исход) | никогда |
+| `Promise.race` | первый завершившийся | первый завершившийся |
+| `Promise.any` | первый выполнившийся | если все отклонены (AggregateError) |
+
+```javascript
+// all: нужен результат всех, откажется, если хоть один упал
+const [user, posts] = await Promise.all([fetchUser(), fetchPosts()]);
+
+// allSettled: даже при ошибках получим все результаты
+const results = await Promise.allSettled([fetchUser(), fetchPosts()]);
+results.forEach(r => {
+  if (r.status === 'fulfilled') console.log(r.value);
+  else console.error(r.reason);
+});
+
+// race: получить результат или ошибку первого завершившегося (таймаут и т.д.)
+const result = await Promise.race([fetchData(), timeout(5000)]);
+```
+
+**Связанные задачи:**
+
+- [Реализация Promise.all и Promise.allSettled](../../../tasks/frontend/javascript/3_javascript_senior.md#реализация-promiseall-и-promiseallsettled)
+
+**Материалы для изучения:**
+
+- [MDN: Promise.allSettled](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled)
+
+---
+
+## Что такое мемоизация и для чего она нужна?
+
+Мемоизация — техника оптимизации: функция запоминает (кэширует) результат для заданных входных данных и возвращает сохранённый результат при повторном вызове с теми же аргументами.
+
+```javascript
+function memoize(fn) {
+  const cache = new Map();
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+}
+
+const expensiveCalc = memoize((n) => {
+  console.log('Computing...');
+  return n * n;
+});
+
+expensiveCalc(5); // Computing... 25
+expensiveCalc(5); // 25 (без Computing!)
+expensiveCalc(6); // Computing... 36
+```
+
+**Когда применять:** чистые функции с дорогим вычислением (рекурсивный Fibonacci, парсинг, сложные трансформации). Не подходит для функций с побочными эффектами, недетерминированным вводом или бесконечным множеством уникальных аргументов.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Map](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Map)

@@ -9,6 +9,12 @@
 - [Стрелочные функции vs обычные: полное сравнение?](#стрелочные-функции-vs-обычные-полное-сравнение)
 - [Ключевые нововведения ES6+?](#ключевые-нововведения-es6)
 - [Что такое деструктуризация, spread и rest?](#что-такое-деструктуризация-spread-и-rest)
+- [Как работают call, apply и bind?](#как-работают-call-apply-и-bind)
+- [Глубокое vs поверхностное копирование объектов?](#глубокое-vs-поверхностное-копирование-объектов)
+- [Как работает цикл событий (event loop)?](#как-работает-цикл-событий-event-loop)
+- [Что такое debounce и throttle?](#что-такое-debounce-и-throttle)
+- [В чём разница между hasOwnProperty и оператором in?](#в-чём-разница-между-hasownproperty-и-оператором-in)
+- [Что возвращает ['1','7','11'].map(parseInt) и почему?](#что-возвращает-1711mapparseint-и-почему)
 
 ---
 
@@ -234,3 +240,227 @@ log("info", "hello", "world"); // messages = ["hello", "world"]
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Как работают call, apply и bind?
+
+Все три метода позволяют явно задать `this` для функции, но применяются по-разному.
+
+- **`call(thisArg, arg1, arg2, ...)`** — вызывает функцию немедленно, аргументы перечисляются через запятую.
+- **`apply(thisArg, [args])`** — вызывает функцию немедленно, аргументы передаются массивом.
+- **`bind(thisArg, arg1, ...)`** — возвращает новую функцию с привязанным `this` (и опционально первыми аргументами), вызов отложен.
+
+```javascript
+function greet(greeting, punctuation) {
+  return `${greeting}, ${this.name}${punctuation}`;
+}
+
+const user = { name: "Alice" };
+
+greet.call(user, "Привет", "!");    // "Привет, Alice!"
+greet.apply(user, ["Привет", "!"]); // "Привет, Alice!"
+
+const boundGreet = greet.bind(user, "Привет");
+boundGreet("?"); // "Привет, Alice?"
+
+// Практический кейс: заимствование метода
+const arrayLike = { 0: "a", 1: "b", length: 2 };
+Array.prototype.slice.call(arrayLike); // ["a", "b"]
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Function.prototype.bind](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)
+
+---
+
+## Глубокое vs поверхностное копирование объектов?
+
+**Поверхностная копия (shallow copy)** — копируются только свойства первого уровня. Вложенные объекты копируются по ссылке, поэтому изменение вложенного объекта в копии влияет на оригинал.
+
+**Глубокая копия (deep copy)** — рекурсивно копируются все уровни вложенности.
+
+```javascript
+const original = { a: 1, nested: { b: 2 } };
+
+// Поверхностная — через Object.assign или spread
+const shallow = { ...original };
+shallow.nested.b = 99; // меняет и original.nested.b!
+
+// Глубокая — через structuredClone (современный способ)
+const deep = structuredClone(original);
+deep.nested.b = 99; // original.nested.b не изменится
+
+// Альтернатива: JSON.parse(JSON.stringify(...))
+// Не работает с: undefined, функциями, Date, Map, Set, RegExp, circular refs
+const jsonCopy = JSON.parse(JSON.stringify(original));
+```
+
+**Когда что использовать:** shallow copy дешевле, подходит для плоских объектов и иммутабельных обновлений состояния (Redux-паттерн). `structuredClone` — для глубокого копирования с поддержкой большинства типов данных.
+
+**Связанные задачи:**
+
+- [Глубокое копирование объекта](../../../tasks/frontend/javascript/2_javascript_middle.md#глубокое-копирование-объекта)
+
+**Материалы для изучения:**
+
+- [MDN: structuredClone](https://developer.mozilla.org/ru/docs/Web/API/structuredClone)
+
+---
+
+## Как работает цикл событий (event loop)?
+
+JavaScript — однопоточный язык. Event loop — механизм, позволяющий выполнять асинхронный код без блокировки потока.
+
+**Очереди задач:**
+- **Call stack** — синхронный код, выполняется немедленно.
+- **Microtask queue** — Promise-колбэки (`.then`, `.catch`), `queueMicrotask`, `MutationObserver`. Опустошается **полностью** после каждого шага event loop, перед следующей макрозадачей.
+- **Macrotask queue (task queue)** — `setTimeout`, `setInterval`, события ввода/вывода. Выбирается по одной задаче за итерацию.
+
+```javascript
+console.log("1"); // sync
+
+setTimeout(() => console.log("2"), 0); // macrotask
+
+Promise.resolve().then(() => console.log("3")); // microtask
+
+console.log("4"); // sync
+
+// Вывод: 1 → 4 → 3 → 2
+```
+
+**Порядок:** сначала весь синхронный код → все микрозадачи → одна макрозадача → снова все микрозадачи → ...
+
+**Связанные задачи:**
+
+- [Порядок вывода в event loop](../../../tasks/frontend/javascript/2_javascript_middle.md#порядок-вывода-в-event-loop)
+
+**Материалы для изучения:**
+
+- [MDN: Event loop](https://developer.mozilla.org/ru/docs/Web/JavaScript/Event_loop)
+
+---
+
+## Что такое debounce и throttle?
+
+Оба паттерна ограничивают частоту вызова функции, но по-разному.
+
+**Debounce** — откладывает вызов до тех пор, пока между событиями не пройдёт заданная пауза. Подходит для поиска по вводу, авторезмера окна.
+
+**Throttle** — гарантирует вызов не чаще, чем раз в N мс. Подходит для обработки скролла, mousemove.
+
+```javascript
+// Debounce
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+const onSearch = debounce((query) => fetchResults(query), 300);
+
+// Throttle
+function throttle(fn, limit) {
+  let lastCall = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastCall >= limit) {
+      lastCall = now;
+      return fn.apply(this, args);
+    }
+  };
+}
+
+const onScroll = throttle(() => updateHeader(), 100);
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: setTimeout](https://developer.mozilla.org/ru/docs/Web/API/setTimeout)
+
+---
+
+## В чём разница между hasOwnProperty и оператором in?
+
+Оба способа проверяют наличие свойства в объекте, но с разным охватом:
+
+- **`in`** — проверяет и собственные свойства, и **унаследованные** через цепочку прототипов.
+- **`hasOwnProperty`** — проверяет **только собственные** свойства объекта, унаследованные игнорирует.
+
+```javascript
+class Animal {
+  constructor(name) { this.name = name; }
+  sound() { console.log("..."); }
+}
+
+class Dog extends Animal {
+  constructor(name) { super(name); this.breed = "Lab"; }
+  bark() { console.log("Woof!"); }
+}
+
+const dog = new Dog("Buddy");
+
+dog.hasOwnProperty('name');  // true  — name задано в конструкторе
+dog.hasOwnProperty('breed'); // true  — breed задано в конструкторе Dog
+dog.hasOwnProperty('sound'); // false — sound на прототипе Animal
+dog.hasOwnProperty('bark');  // false — bark на прототипе Dog
+
+'name'  in dog; // true
+'sound' in dog; // true  — унаследовано, но in его видит!
+'bark'  in dog; // true
+```
+
+**Современная альтернатива:** `Object.hasOwn(obj, key)` — стандартный способ без необходимости вызывать метод через прототип.
+
+```javascript
+// Безопаснее, чем hasOwnProperty (работает даже если метод переопределён)
+Object.hasOwn(dog, 'name'); // true
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: Object.hasOwn](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn)
+
+---
+
+## Что возвращает ['1','7','11'].map(parseInt) и почему?
+
+Результат: `[1, NaN, 3]` — и это классическая ловушка JavaScript.
+
+Метод `Array.prototype.map` передаёт в колбэк **три аргумента**: `(элемент, индекс, массив)`. Функция `parseInt(string, radix)` принимает два аргумента: строку и **основание системы счисления**.
+
+```javascript
+['1', '7', '11'].map(parseInt)
+// Раскрывается как:
+// parseInt('1',  0)  → 1   (radix=0 → используется 10)
+// parseInt('7',  1)  → NaN (единичная система счисления не имеет цифры 7)
+// parseInt('11', 2)  → 3   (двоичное 11 = десятичное 3)
+```
+
+Чтобы корректно преобразовать строки в числа:
+
+```javascript
+['1', '7', '11'].map(Number);        // [1, 7, 11]
+['1', '7', '11'].map(n => parseInt(n, 10)); // [1, 7, 11]
+```
+
+**Вывод:** никогда не передавай функции с необязательными параметрами напрямую в `map/filter/forEach` без обёртки — лишние аргументы могут изменить поведение.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: parseInt](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/parseInt)

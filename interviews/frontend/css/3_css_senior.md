@@ -8,6 +8,8 @@
 - [Как работает will-change и когда его применять?](#как-работает-will-change-и-когда-его-применять)
 - [Что такое критический CSS?](#что-такое-критический-css)
 - [Как обеспечить кроссбраузерность в 2025 году?](#как-обеспечить-кроссбраузерность-в-2025-году)
+- [Когда использовать translate() вместо position: absolute?](#когда-использовать-translate-вместо-position-absolute)
+- [Что такое CSS filter и как он влияет на stacking context?](#что-такое-css-filter-и-как-он-влияет-на-stacking-context)
 
 ---
 
@@ -125,3 +127,81 @@ element.addEventListener("animationend", () => el.style.willChange = "auto");
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Когда использовать translate() вместо position: absolute?
+
+`transform: translate()` перемещает элемент без выхода из потока и не вызывает layout — смещение происходит на этапе composite, что в разы дешевле. `position: absolute` меняет геометрию страницы и при анимации вызывает layout на каждом кадре.
+
+```css
+/* Плохо для анимации — вызывает reflow на каждом кадре */
+@keyframes slide-bad {
+  from { left: 0; }
+  to { left: 300px; }
+}
+
+/* Хорошо — только composite, GPU-ускорение */
+@keyframes slide-good {
+  from { transform: translateX(0); }
+  to { transform: translateX(300px); }
+}
+```
+
+Типичный паттерн центрирования через `translate` также предпочтительнее `position` + отрицательных `margin`:
+
+```css
+/* Современное центрирование */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+```
+
+Используй `position: absolute` для размещения элементов в DOM-структуре, `translate` — для анимаций и визуальных смещений.
+
+**Связанные задачи:**
+
+- [CSS-анимация по производительности](../../../tasks/frontend/css/2_css_middle.md#css-анимация-по-производительности)
+
+**Материалы для изучения:**
+
+- [MDN: transform](https://developer.mozilla.org/ru/docs/Web/CSS/transform)
+- [web.dev: Stick to Compositor-Only Properties](https://web.dev/articles/stick-to-compositor-only-properties-and-manage-layer-count)
+
+---
+
+## Что такое CSS filter и как он влияет на stacking context?
+
+`filter` применяет графические эффекты к элементу и его потомкам: размытие, насыщенность, контрастность, тени, оттенки. Ключевой побочный эффект: **любое значение `filter` кроме `none` создаёт новый stacking context**, что может сломать ожидаемое поведение `z-index` у дочерних элементов.
+
+```css
+.blur       { filter: blur(4px); }
+.grayscale  { filter: grayscale(100%); }
+.dark-mode  { filter: invert(90%) hue-rotate(180deg); }
+
+/* Комбинирование фильтров */
+.card:hover {
+  filter: brightness(1.1) drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+```
+
+`drop-shadow()` в отличие от `box-shadow` обтекает фактическую форму элемента (включая прозрачные части PNG), а не его прямоугольник.
+
+```css
+/* box-shadow — тень вокруг прямоугольника */
+.icon { box-shadow: 0 4px 8px black; }
+
+/* drop-shadow — тень по контуру изображения */
+.icon { filter: drop-shadow(0 4px 8px black); }
+```
+
+**Связанные задачи:**
+
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: filter](https://developer.mozilla.org/ru/docs/Web/CSS/filter)

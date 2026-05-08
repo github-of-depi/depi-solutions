@@ -9,6 +9,8 @@
 - [Как работает батчинг обновлений в React 18?](#как-работает-батчинг-обновлений-в-react-18)
 - [Что такое forwardRef и useImperativeHandle?](#что-такое-forwardref-и-useimperativehandle)
 - [Как виртуализировать длинные списки?](#как-виртуализировать-длинные-списки)
+- [Что такое HOC и как его использовать?](#что-такое-hoc-и-как-его-использовать)
+- [Техники оптимизации производительности React?](#техники-оптимизации-производительности-react)
 
 ---
 
@@ -156,3 +158,88 @@ const virtualizer = useVirtualizer({
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Что такое HOC и как его использовать?
+
+HOC (Higher-Order Component) — функция, принимающая компонент и возвращающая **новый компонент** с расширенным поведением. Позволяет повторно использовать логику без дублирования.
+
+```tsx
+// HOC: защищает маршрут от неавторизованных пользователей
+function withAuth<P extends {}>(WrappedComponent: React.FC<P>) {
+  return function WithAuth(props: P) {
+    const isAuth = useAuth();
+    if (!isAuth) return <Navigate to="/login" />;
+    return <WrappedComponent {...props} />;
+  };
+}
+
+const ProtectedDashboard = withAuth(Dashboard);
+
+// HOC для логгирования рендеров
+function withLogger<P>(Component: React.FC<P>) {
+  return function WithLogger(props: P) {
+    useEffect(() => { console.log('render', Component.name, props); });
+    return <Component {...props} />;
+  };
+}
+```
+
+**Когда использовать:** авторизация, перехват ошибок, фечеризация (feature flags), логгирование. Современная альтернатива — кастомные хуки, которые решают те же задачи чище.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [React Docs: Higher-Order Components](https://legacy.reactjs.org/docs/higher-order-components.html)
+
+---
+
+## Техники оптимизации производительности React?
+
+**1. Предотвращение лишних ре-рендеров:**
+- `React.memo` — мемоизация компонента (поверхностное сравнение props)
+- `useCallback` — стабильные ссылки на функции для `memo`-компонентов
+- `useMemo` — мемоизация дорогостоящих вычислений
+
+**2. Раздробление кода (ленивая загрузка):**
+- `React.lazy` + `Suspense` — динамический импорт компонентов
+- раздробление bundle по маршрутам
+
+**3. Виртуализация списков:**
+- `react-window`, `@tanstack/virtual` — рендеринг только видимых элементов
+
+**4. Правильная структура состояния:**
+- Колокация состояния вниз (не пропсы с объектами-значениями)
+- Неизменяемые обновления (вместо мутации)
+
+```tsx
+// Пример: React.lazy + Suspense
+const AdminPanel = React.lazy(() => import('./AdminPanel'));
+
+function App() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <AdminPanel />
+    </Suspense>
+  );
+}
+
+// Пример: мемоизация + useCallback
+const Item = React.memo(({ label, onClick }) => <button onClick={onClick}>{label}</button>);
+
+function Parent() {
+  const handleClick = useCallback(() => {/* ... */}, []); // стабильная ссылка
+  return <Item label="test" onClick={handleClick} />;
+}
+```
+
+**Связанные задачи:**
+
+- [Оптимизация ре-рендеров: memo + useCallback](../../../tasks/frontend/react/2_react_middle.md#оптимизация-ре-рендеров-memo--usecallback)
+
+**Материалы для изучения:**
+
+- [React Docs: Производительность](https://react.dev/learn/render-and-commit)
