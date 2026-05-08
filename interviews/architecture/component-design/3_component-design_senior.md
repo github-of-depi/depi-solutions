@@ -1,0 +1,43 @@
+﻿# Дизайн компонентов — Senior
+
+## Вопросы
+
+- [Как строить компонентную систему для design system?](#как-строить-компонентную-систему-для-design-system)
+- [Как обеспечить backward compatibility при изменении API компонента?](#как-обеспечить-backward-compatibility-при-изменении-api-компонента)
+- [Как тестировать компоненты с точки зрения дизайна?](#как-тестировать-компоненты-с-точки-зрения-дизайна)
+- [Что такое Inversion of Control в контексте компонентов?](#что-такое-inversion-of-control-в-контексте-компонентов)
+
+---
+
+## Как строить компонентную систему для design system?
+
+1. **Token layer** — CSS переменные для colors, spacing, typography
+2. **Primitive layer** — базовые элементы (Box, Text, Flex) с token-aware props
+3. **Component layer** — сложные компоненты поверх primitives
+4. **Pattern layer** — page templates, layout patterns
+5. **Versioning** — semantic versioning, changelog, migration guides
+
+---
+
+## Как обеспечить backward compatibility при изменении API компонента?
+
+1. Deprecation warning в dev mode при использовании старых props
+2. Поддержка обоих API в течение major версии
+3. Codemods — автоматическая миграция кода через jscodeshift
+4. Storybook истории документируют контракт компонента
+5. Snapshot тесты предупреждают о визуальных регрессиях
+
+---
+
+## Как тестировать компоненты с точки зрения дизайна?
+
+1. **Storybook** — изолированная разработка и документация
+2. **Chromatic** — visual regression testing по скриншотам
+3. **RTL (React Testing Library)** — поведенческие тесты (что пользователь видит/делает)
+4. **axe-core** — accessibility audit в тестах
+
+---
+
+## Что такое Inversion of Control в контексте компонентов?
+
+IoC — компонент передаёт управление поведением потребителю. Паттерны: state reducer (потребитель изменяет reducer), control props (потребитель управляет state), render props/slots (потребитель определяет UI части). Headless components — крайняя форма IoC.

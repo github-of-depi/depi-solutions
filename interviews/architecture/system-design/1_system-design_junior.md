@@ -1,0 +1,35 @@
+﻿# System Design (Frontend) — Junior
+
+## Вопросы
+
+- [Что такое frontend system design?](#что-такое-frontend-system-design)
+- [Что такое CDN и зачем он нужен?](#что-такое-cdn-и-зачем-он-нужен)
+- [SPA vs SSR vs SSG: в чём разница?](#spa-vs-ssr-vs-ssg-в-чём-разница)
+- [Что такое кэширование на уровне браузера?](#что-такое-кэширование-на-уровне-браузера)
+
+---
+
+## Что такое frontend system design?
+
+Frontend system design — проектирование высокоуровневой архитектуры UI системы: выбор рендеринга, CDN, кэширование, масштабирование, работа с API. Собеседование: "Спроектируй Twitter Feed" или "Спроектируй Google Autocomplete".
+
+---
+
+## Что такое CDN и зачем он нужен?
+
+CDN (Content Delivery Network) — распределённая сеть серверов по всему миру. Статические ресурсы (JS, CSS, изображения) отдаются с ближайшего к пользователю узла. Меньше latency, разгрузка origin сервера. Примеры: Cloudflare, Fastly, AWS CloudFront.
+
+---
+
+## SPA vs SSR vs SSG: в чём разница?
+
+- **SPA**: HTML с JS, рендер на клиенте. Быстрая навигация, плохой SEO, медленный FCP.
+- **SSR**: HTML на сервере per request. Хороший SEO, быстрый FCP, высокая нагрузка на сервер.
+- **SSG**: HTML генерируется при сборке. Быстро, дёшево (CDN), но требует rebuild при изменении контента.
+- **ISR**: SSG с инкрементальной регенерацией (Next.js).
+
+---
+
+## Что такое кэширование на уровне браузера?
+
+`Cache-Control` заголовок: `max-age`, `s-maxage`, `no-cache`, `no-store`. `ETag`/`Last-Modified` — conditional requests. Иммутабельные файлы с hash в имени (`main.abc123.js`) → `Cache-Control: max-age=31536000, immutable`.

@@ -1,0 +1,51 @@
+﻿# Docker — Junior
+
+## Вопросы
+
+- [Что такое Docker?](#что-такое-docker)
+- [Что такое image и container?](#что-такое-image-и-container)
+- [Что такое Dockerfile?](#что-такое-dockerfile)
+- [Основные Docker команды?](#основные-docker-команды)
+
+---
+
+## Что такое Docker?
+
+Docker — платформа для контейнеризации. Приложение упаковывается со всеми зависимостями в изолированный контейнер. Работает одинаково на любой машине ("у меня работает" → "работает везде"). Быстрее VM, легче в управлении.
+
+---
+
+## Что такое image и container?
+
+**Image** — неизменяемый шаблон (blueprint): слои файловой системы, команды запуска. **Container** — запущенный экземпляр image. Image:Container = Класс:Объект. Один image → множество контейнеров.
+
+---
+
+## Что такое Dockerfile?
+
+Dockerfile — инструкции для сборки image.
+
+```dockerfile
+FROM node:20-alpine       # базовый image
+WORKDIR /app              # рабочая директория
+COPY package*.json ./     # копировать package.json
+RUN npm ci                # установить зависимости
+COPY . .                  # копировать исходники
+RUN npm run build         # собрать
+EXPOSE 3000               # документировать порт
+CMD ["node", "dist/server.js"]  # команда запуска
+```
+
+---
+
+## Основные Docker команды?
+
+```bash
+docker build -t my-app .        # собрать image
+docker run -p 3000:3000 my-app  # запустить контейнер
+docker ps                       # список запущенных
+docker stop <id>                # остановить
+docker images                   # список образов
+docker logs <id>                # логи контейнера
+docker exec -it <id> sh         # войти в контейнер
+```

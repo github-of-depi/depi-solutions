@@ -1,0 +1,55 @@
+﻿# WebSockets — Junior
+
+## Вопросы
+
+- [Что такое WebSocket и чем он отличается от HTTP?](#что-такое-websocket-и-чем-он-отличается-от-http)
+- [Как создать WebSocket соединение в браузере?](#как-создать-websocket-соединение-в-браузере)
+- [Что такое SSE (Server-Sent Events)?](#что-такое-sse-server-sent-events)
+- [Когда использовать WebSockets, а когда SSE?](#когда-использовать-websockets-а-когда-sse)
+- [Что происходит при разрыве WebSocket соединения?](#что-происходит-при-разрыве-websocket-соединения)
+
+---
+
+## Что такое WebSocket и чем он отличается от HTTP?
+
+WebSocket — протокол двунаправленной связи в реальном времени через постоянное соединение. HTTP: запрос-ответ (клиент инициирует). WebSocket: после handshake — любая сторона может отправлять данные в любой момент. Используется для чатов, уведомлений, совместного редактирования.
+
+---
+
+## Как создать WebSocket соединение в браузере?
+
+```typescript
+const ws = new WebSocket("wss://api.example.com/ws");
+
+ws.onopen = () => ws.send(JSON.stringify({ type: "subscribe", channel: "prices" }));
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  updateUI(data);
+};
+ws.onerror = (error) => console.error("WS error:", error);
+ws.onclose = (event) => console.log("WS closed:", event.code, event.reason);
+```
+
+---
+
+## Что такое SSE (Server-Sent Events)?
+
+SSE — однонаправленный поток данных от сервера к клиенту через обычный HTTP. Текстовый формат, автоматический reconnect, поддержка `EventSource` API. Проще WebSocket для сценариев push-only (AI стриминг, уведомления).
+
+```typescript
+const es = new EventSource("/api/stream");
+es.onmessage = (e) => console.log(e.data);
+es.onerror = () => es.close();
+```
+
+---
+
+## Когда использовать WebSockets, а когда SSE?
+
+**WebSockets**: двунаправленная связь (чат, игры, совместное редактирование), бинарные данные. **SSE**: только сервер → клиент (AI стриминг, live feed, уведомления), проще реализация, работает через HTTP/2. SSE автоматически переподключается, WebSocket — нужно вручную.
+
+---
+
+## Что происходит при разрыве WebSocket соединения?
+
+Событие `onclose` с кодом и причиной. Нужна логика переподключения: exponential backoff, максимальное количество попыток. SSE переподключается автоматически.
