@@ -57,8 +57,6 @@ depi-solutions/
 ├── ai/                          # AI-инструменты
 │   ├── copilot/
 │   └── cursor/
-│
-└── _references/                 # Исходные материалы (не редактировать)
 ```
 
 ---
