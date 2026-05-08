@@ -14,6 +14,12 @@
 
 Трёхуровневая модель: **Primitive tokens** (raw values: `--color-blue-500: #3b82f6`), **Semantic tokens** (значение через контекст: `--color-interactive: var(--color-blue-500)`), **Component tokens** (`--button-bg: var(--color-interactive)`). Semantic слой делает тему возможной без изменения компонентов.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как обеспечить server-side rendering для CSS-in-JS?
@@ -34,6 +40,12 @@ function StyledComponentsRegistry({ children }: { children: React.ReactNode }) {
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Tailwind vs CSS-in-JS — что выбрать для большого проекта?
@@ -41,6 +53,12 @@ function StyledComponentsRegistry({ children }: { children: React.ReactNode }) {
 **Tailwind**: быстрая разработка, нет рантайм, отличная поддержка, легко онбордировать. Минус: длинные className строки, не очевидна бизнес-семантика. **CSS-in-JS** (zero-runtime): TypeScript-first, semantic names, co-location. Минус: сложнее настройка.
 
 Тренд 2025: Tailwind + shadcn/ui как стандарт для новых проектов. Для design systems с строгими требованиями — vanilla-extract или StyleX.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -56,6 +74,12 @@ Style Dictionary (Amazon) — transform pipeline для design tokens: JSON/JSON
 
 Выходной CSS: `--color-brand-500: #3b82f6;` — автоматически.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как тестировать стили компонентов?
@@ -69,3 +93,9 @@ Style Dictionary (Amazon) — transform pipeline для design tokens: JSON/JSON
 expect(element).toHaveStyle("display: flex");
 expect(element).toHaveClass("bg-blue-500");
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

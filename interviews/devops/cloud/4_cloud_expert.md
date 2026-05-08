@@ -18,8 +18,20 @@ const bucket = new aws.s3.Bucket("frontend", { website: { indexDocument: "index.
 const cdn = new aws.cloudfront.Distribution("cdn", { origins: [{ domainName: bucket.bucketRegionalDomainName }], ... });
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как работать с WebAssembly на Edge?
 
 Cloudflare Workers поддерживает Wasm модули. Rust/C++ → Wasm → запуск на Edge. Кейсы: криптографические операции, resize изображений, обработка данных без origin. Fastly Compute@Edge — Wasm-first platform.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

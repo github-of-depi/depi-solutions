@@ -24,6 +24,12 @@ export async function getStaticProps() {
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое API Routes в Next.js?
@@ -44,6 +50,12 @@ export async function POST(request: Request) {
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как работает middleware в Next.js?
@@ -62,6 +74,12 @@ export function middleware(request: NextRequest) {
 export const config = { matcher: ["/dashboard/:path*"] };
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое dynamic imports в Next.js?
@@ -75,6 +93,12 @@ const HeavyChart = dynamic(() => import("./HeavyChart"), {
   ssr: false,
 });
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -95,6 +119,12 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое Metadata API в Next.js?
@@ -111,6 +141,12 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   return { title: product.name, openGraph: { images: [product.image] } };
 }
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -131,3 +167,9 @@ fetch(url, { next: { tags: ["products"] } });
 import { revalidateTag } from "next/cache";
 revalidateTag("products");
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
