@@ -33,11 +33,23 @@ router.post("/", authenticate, validate(createUserSchema), async (req, res, next
 export default router;
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое middleware в Express?
 
 Middleware — функция `(req, res, next)` в pipeline обработки запроса. Порядок важен. `next()` — передать следующему. `next(err)` — к error handler.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -56,11 +68,23 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 process.on("unhandledRejection", (reason) => { logger.error(reason); process.exit(1); });
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое streams в Node.js?
 
 Streams — обработка данных по частям (не загружать всё в память). Readable, Writable, Transform. Файлы, HTTP ответы, SSE — streams. `pipe()` для chaining.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -75,3 +99,9 @@ const env = z.object({
   JWT_SECRET: z.string().min(32),
 }).parse(process.env);
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

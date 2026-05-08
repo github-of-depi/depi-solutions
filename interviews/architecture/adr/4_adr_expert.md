@@ -16,6 +16,12 @@
 
 Governance: Architecture Review Board для cross-team решений. Inner-source: команды могут предлагать изменения org ADR через PR.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как автоматизировать ADR workflow?
@@ -33,3 +39,9 @@ Governance: Architecture Review Board для cross-team решений. Inner-so
 ```
 
 Инструменты: `adr-tools` (CLI), Log4brains (web UI для ADR). ADR как docs-as-code: автоматически публиковать в Confluence/Notion.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

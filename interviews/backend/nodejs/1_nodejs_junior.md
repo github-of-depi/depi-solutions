@@ -14,11 +14,23 @@
 
 Node.js — JavaScript runtime на базе V8 движка Chrome. Позволяет запускать JS на сервере. Однопоточный, но асинхронный через event loop. Популярен для: REST API, real-time сервисов, BFF, инструментов (webpack, vite).
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое event loop в Node.js?
 
 Event loop позволяет Node.js выполнять неблокирующие I/O операции в одном потоке. Фазы: timers (setTimeout/setInterval), poll (I/O), check (setImmediate). Microtasks (Promises, process.nextTick) — между фазами.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -38,14 +50,32 @@ app.get("/api/users", async (req, res) => {
 app.listen(3000, () => console.log("Server running on :3000"));
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое npm пакеты и package.json?
 
 `package.json` — манифест проекта: название, версия, dependencies, scripts. `npm install` → `node_modules/`. `dependencies` — runtime. `devDependencies` — только для разработки. `peerDependencies` — ожидает установки от потребителя.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое CommonJS vs ES Modules?
 
 **CJS**: `require()` / `module.exports` — Node.js стандарт до ESM. Синхронный. **ESM**: `import` / `export` — стандарт браузера и современного Node. Асинхронный, tree-shakeable. `"type": "module"` в package.json для ESM в Node.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

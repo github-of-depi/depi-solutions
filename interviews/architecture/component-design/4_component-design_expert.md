@@ -25,6 +25,12 @@ async function ProductPage({ id }: { id: string }) {
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как проектировать компоненты для максимальной производительности?
@@ -35,6 +41,12 @@ async function ProductPage({ id }: { id: string }) {
 4. **Code splitting** — компонент на свой chunk через dynamic import
 5. **Избегать context overhead** — useContextSelector или atomic state (Jotai)
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как строить компонентную библиотеку с нуля?
@@ -44,3 +56,9 @@ async function ProductPage({ id }: { id: string }) {
 3. **Styling**: CSS Variables + Tailwind или zero-runtime CSS-in-JS (Linaria)
 4. **Testing**: Vitest + RTL + Chromatic
 5. **Publishing**: npm, changesets для versioning, автодокументация через TypeDoc
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

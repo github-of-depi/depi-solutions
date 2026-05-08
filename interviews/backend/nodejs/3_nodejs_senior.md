@@ -17,6 +17,12 @@
 5. **Security headers**: `helmet` middleware
 6. **Logging**: pino (самый быстрый JSON logger) + correlation ID
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое worker_threads?
@@ -29,6 +35,12 @@ const worker = new Worker("./worker.js", { workerData: { imageBuffer } });
 worker.on("message", (result) => sendResponse(result));
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как оптимизировать производительность Node.js?
@@ -38,3 +50,9 @@ worker.on("message", (result) => sendResponse(result));
 3. **Caching**: Redis для частых запросов
 4. **Streaming**: streaming ответов для больших данных
 5. **Profiling**: Node.js built-in profiler, clinic.js, 0x
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

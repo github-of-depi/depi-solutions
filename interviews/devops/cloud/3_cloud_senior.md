@@ -12,6 +12,12 @@
 
 Статика: CDN поставляет везде автоматически. SSR: несколько регионов через cloud provider (Vercel auto, Fly.io). Database: Read replicas в каждом регионе. Georouting: Route53 Latency-based routing → ближайший регион.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как оптимизировать CDN кэширование?
@@ -23,6 +29,12 @@
 
 Cache invalidation: при деплое инвалидировать CDN (`aws cloudfront create-invalidation`).
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как строить observability для cloud frontend?
@@ -32,3 +44,9 @@ Cache invalidation: при деплое инвалидировать CDN (`aws c
 3. **Uptime**: Cloudflare Healthchecks, Checkly synthetics
 4. **Alerts**: PagerDuty / OpsGenie при выходе метрик за пороги
 5. **Cost monitoring**: AWS Cost Explorer, Vercel usage alerts
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

@@ -30,6 +30,12 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Какие utility types есть в TypeScript?
@@ -49,6 +55,12 @@ NonNullable<T>         // исключает null и undefined
 Awaited<Promise<T>>    // тип разрешённого промиса
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое type guards?
@@ -66,6 +78,12 @@ function isUser(value: unknown): value is User {
   return typeof value === "object" && value !== null && "id" in value;
 }
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -87,6 +105,12 @@ function reduce(state: number, action: Action): number {
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое keyof и typeof?
@@ -100,6 +124,12 @@ const config = { host: "localhost", port: 3000 } as const;
 type Config = typeof config; // { readonly host: "localhost"; readonly port: 3000 }
 type ConfigKeys = keyof typeof config; // "host" | "port"
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -120,6 +150,12 @@ type Getters<T> = {
 };
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое conditional types?
@@ -138,6 +174,12 @@ type ElementType<string[]> // string
 // Awaited использует infer для разворачивания Promise
 type Awaited<T> = T extends Promise<infer R> ? Awaited<R> : T;
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -161,6 +203,12 @@ process("hello"); // string
 process(5);       // number
 process("hello", 5); // TS Error — нет подходящей сигнатуры
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -186,6 +234,12 @@ interface AdminUser extends Serializable, Loggable {
   role: "admin";
 }
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -213,6 +267,12 @@ type Result<T> =
   | { ok: true;  value: T }
   | { ok: false; error: string };
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -245,3 +305,9 @@ const module = await import("./heavy-module");
 ```
 
 TypeScript модули компилируются в CJS или ESM в зависимости от `tsconfig.json` (`"module": "esnext"` / `"commonjs"`). `moduleResolution: "bundler"` — для Vite/webpack.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

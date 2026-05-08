@@ -16,8 +16,20 @@
 5. **Caching layers**: memory cache (node-lru-cache) → Redis → DB
 6. **Benchmarking**: autocannon, k6 для нагрузочного тестирования
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое libuv?
 
 libuv — C библиотека, реализующая event loop для Node.js. Управляет: async I/O через epoll/kqueue/IOCP, thread pool (по умолчанию 4 потока для crypto, fs, DNS). `UV_THREADPOOL_SIZE` — увеличить при CPU-heavy async operations. Node.js → V8 (JS execution) + libuv (async I/O) + C++ bindings.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

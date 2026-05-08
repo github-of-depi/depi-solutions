@@ -18,6 +18,12 @@
 5. N+1 → JOIN или подзапрос
 6. Покрывающие индексы: все поля запроса в индексе → index-only scan
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое EXPLAIN ANALYZE?
@@ -31,6 +37,12 @@ SELECT * FROM orders WHERE user_id = 1 ORDER BY created_at DESC;
 
 Что смотреть: `Seq Scan` (медленно для больших таблиц) → `Index Scan` (с индексом). `cost`, `actual time`, `rows`. `Nested Loop` при JOIN без индекса → `Hash Join`.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как строить эффективную схему БД?
@@ -40,6 +52,12 @@ SELECT * FROM orders WHERE user_id = 1 ORDER BY created_at DESC;
 3. **Timestamp**: `created_at DEFAULT NOW()`, `updated_at` — всегда добавлять
 4. **Soft delete**: `deleted_at TIMESTAMP` вместо DELETE
 5. **Enum vs reference table**: enum для стабильных значений, таблица — для динамических
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -54,3 +72,9 @@ FROM orders GROUP BY 1;
 
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_revenue;
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

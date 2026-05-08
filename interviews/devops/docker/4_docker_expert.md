@@ -16,6 +16,12 @@
 5. **Rolling updates**: zero-downtime deployment через K8s Deployment strategy
 6. **Monitoring**: container metrics (Prometheus/Grafana), centralized logging (Loki)
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Docker vs другие контейнерные технологии?
@@ -25,3 +31,9 @@
 - **Buildpacks** (Heroku/Cloud Native) — автоматическая сборка без Dockerfile
 - **Nix** — reproducible builds, альтернатива Docker для dev environments
 - **Wasm** — WebAssembly как альтернатива контейнерам для edge computing (размер, скорость старта)
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

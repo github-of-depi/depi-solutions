@@ -13,11 +13,23 @@
 
 **CI** (Continuous Integration) — автоматическая сборка и тестирование при каждом push. Раннее обнаружение ошибок. **CD** (Continuous Delivery/Deployment) — автоматический деплой после прохождения CI. Delivery — в staging с ручным approve. Deployment — в production автоматически.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое GitHub Actions?
 
 GitHub Actions — CI/CD платформа встроенная в GitHub. Конфигурация через YAML в `.github/workflows/`. Триггеры: push, PR, schedule, manual. Runners: ubuntu, macos, windows.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -41,8 +53,20 @@ jobs:
       - run: npm run build
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое environment variables в CI?
 
 Secrets в GitHub: Settings → Secrets and Variables. В workflow через `${{ secrets.API_KEY }}`. Никогда не логировать secrets (`echo $API_KEY` — опасно). Environment-specific secrets через GitHub Environments (staging, production).
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

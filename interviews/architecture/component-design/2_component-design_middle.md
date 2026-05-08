@@ -34,6 +34,12 @@ Tabs.Panel = TabsPanel;
 </Tabs>
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое Headless Components?
@@ -47,6 +53,12 @@ function useAccordion(defaultOpen?: string) {
   return { open, toggle };
 }
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -65,6 +77,12 @@ function Button<E extends ElementType = "button">({ as, ...props }: PolymorphicP
 }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Как проектировать API компонента?
@@ -74,8 +92,20 @@ function Button<E extends ElementType = "button">({ as, ...props }: PolymorphicP
 3. Composition-friendly — поддержка `children`, `className`, forwarded `ref`
 4. Escape hatch — способ кастомизировать без форка компонента
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое Controlled vs Uncontrolled паттерн в библиотеках?
 
 Библиотеки UI поддерживают оба режима: controlled (состояние снаружи через value+onChange), uncontrolled (defaultValue, внутреннее состояние). Реализовывать через `useControllableState`: если передан `value` — controlled mode, иначе uncontrolled.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

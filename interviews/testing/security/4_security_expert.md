@@ -19,6 +19,12 @@ STRIDE модель для фронтенда:
 
 DREAD: Damage, Reproducibility, Exploitability, Affected users, Discoverability — scoring уязвимостей.
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое Trusted Types и как они помогают?
@@ -38,3 +44,9 @@ element.innerHTML = policy.createHTML(userInput); // OK
 ```
 
 React поддерживает Trusted Types с v18.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

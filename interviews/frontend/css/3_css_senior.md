@@ -23,6 +23,12 @@
 .slow { left: 100px; }
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое CSS containment?
@@ -34,6 +40,12 @@
 /* content-visibility — lazy rendering off-screen элементов */
 .card-list-item { content-visibility: auto; contain-intrinsic-size: 0 200px; }
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -48,6 +60,12 @@
 @layer components { .btn { padding: 8px 16px; } }
 @layer utilities { .mt-4 { margin-top: 16px; } } /* выигрывает у components */
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -64,11 +82,23 @@ element.addEventListener("mouseenter", () => el.style.willChange = "transform");
 element.addEventListener("animationend", () => el.style.willChange = "auto");
 ```
 
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
 ---
 
 ## Что такое критический CSS?
 
 Критический CSS — инлайн-стили, необходимые для рендера above-the-fold контента. Вставляется в `<style>` тег в `<head>`, остальной CSS загружается асинхронно. Улучшает FCP и LCP, устраняя render-blocking ресурсы. Инструменты: `critical`, `Penthouse`, Vite плагины.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
 
 ---
 
@@ -89,3 +119,9 @@ element.addEventListener("animationend", () => el.style.willChange = "auto");
   .container { display: flex; flex-wrap: wrap; }
 }
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
