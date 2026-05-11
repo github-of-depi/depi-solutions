@@ -21,6 +21,7 @@
 - [Refs в React?](#refs-в-react)
 - [Маршрутизация в React?](#маршрутизация-в-react)
 - [Преимущества React?](#преимущества-react)
+- [Что такое React.StrictMode?](#что-такое-reactstrictmode)
 
 ---
 
@@ -601,3 +602,67 @@ dispatch({ type: 'setStep', payload: 5 });
 **Материалы для изучения:**
 
 - [React Docs: useReducer](https://react.dev/reference/react/useReducer)
+
+
+---
+
+## Что такое React.StrictMode?
+
+`React.StrictMode` — компонент-обёртка для выявления потенциальных проблем в приложении **только в dev-режиме**. Не рендерит никакого UI и не влияет на продакшн-сборку.
+
+```typescript
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+```
+
+**Что делает StrictMode:**
+- **Двойные вызовы** (`render`, тело компонента, `useReducer`) — выявляет побочные side effects
+- **Двойные mount/unmount** (`useEffect`) — проверяет правильность cleanup
+- **Предупреждения** об устаревших API (`componentWillMount`, `findDOMNode` и др.)
+- **Проверка возможности** переиспользовать state (React 18)
+
+**Почему важен**: если useEffect cleanup написан неправильно, StrictMode обнажит это в dev, предотвращая баги при перемонтаже компонентов. Рекомендуется включать в любом реакт-приложении.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+- [React Docs: StrictMode](https://react.dev/reference/react/StrictMode)
+
+
+---
+
+## Что такое React.StrictMode?
+
+`React.StrictMode` — компонент-обёртка для выявления потенциальных проблем в приложении **только в dev-режиме**. Не рендерит никакого UI и не влияет на продакшн-сборку.
+
+`	ypescript
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+```
+
+**Что делает StrictMode:**
+- **Двойные вызовы** (`render`, тело компонента, `useReducer`) — выявляет побочные side effects
+- **Двойные mount/unmount** (`useEffect`) — проверяет правильность cleanup
+- **Предупреждения** об устаревших API (`componentWillMount`, `findDOMNode` и др.)
+- **Проверка возможности** переиспользовать state (React 18)
+
+**Почему важен**: если useEffect cleanup написан неправильно, StrictMode обнажит это в dev, предотвращая баги при перемонтаже компонентов. Рекомендуется включать в любом реакт-приложении.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+- [React Docs: StrictMode](https://react.dev/reference/react/StrictMode)

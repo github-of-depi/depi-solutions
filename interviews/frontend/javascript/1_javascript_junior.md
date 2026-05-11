@@ -35,6 +35,9 @@
 - [Методы массивов — обзор](#методы-массивов--обзор)
 - [Обработка ошибок: try..catch..finally](#обработка-ошибок-trycatchfinally)
 - [use strict — зачем нужен?](#use-strict--зачем-нужен)
+- [Что такое функция обратного вызова (callback)?](#что-такое-функция-обратного-вызова-callback)
+- [Что такое модули (import/export)?](#что-такое-модули-importexport)
+- [Как очистить массив?](#как-очистить-массив)
 
 ---
 
@@ -974,6 +977,104 @@ showThis(); // undefined (не window)
 
 // В ES6 модулях, классах — strict всегда включён автоматически
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Что такое функция обратного вызова (callback)?
+
+Callback — это функция, переданная как аргумент другой функции и вызываемая ею внутри по завершению какой-либо операции. Основной механизм асинхронности до появления Promise.
+
+```javascript
+function fetchData(url, onSuccess, onError) {
+  // имитация асинхронного запроса
+  setTimeout(() => {
+    const data = { user: 'Alice' };
+    onSuccess(data);   // вызываем callback по завершении
+  }, 1000);
+}
+
+fetchData('/api/user',
+  (data) => console.log(data),       // onSuccess callback
+  (err)  => console.error(err)        // onError callback
+);
+
+// Встроенные callback: события, методы массива
+[1, 2, 3].map(x => x * 2);       // (x => x * 2) — callback
+[1, 2, 3].forEach(console.log);  // console.log — callback
+```
+
+**Проблема callback hell**: глубокое вложение callback-ов образует пирамидальное нечитаемое дерево. Решение — Promise / async/await.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+- [MDN: Callback function](https://developer.mozilla.org/ru/docs/Glossary/Callback_function)
+
+---
+
+## Что такое модули (import/export)?
+
+Модули (ES Modules) — стандартный способ разбить код на отдельные файлы с публичным API. Каждый модуль имеет свою область видимости — переменные не попадают в глобальную область.
+
+```javascript
+// math.js — named exports
+export const PI = 3.14159;
+export function add(a, b) { return a + b; }
+
+// app.js — named imports
+import { PI, add } from './math.js';
+import { add as sum } from './math.js'; // переименование
+
+// config.js — default export (один на модуль)
+export default { apiUrl: '/api' };
+
+// app.js — default import (имя произвольное)
+import config from './config.js';
+import * as math from './math.js'; // импорт всего
+```
+
+**Особенности:**
+- Динамический import: `const module = await import('./heavy.js')` (ленивая загрузка)
+- ES Modules работают в strict mode автоматически
+- В старых Node.js проектах используется CommonJS: `module.exports = {}` / `const x = require('./x')`
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+- [MDN: JavaScript modules](https://developer.mozilla.org/ru/docs/Web/JavaScript/Guide/Modules)
+
+---
+
+## Как очистить массив?
+
+Несколько способов с разными последствиями:
+
+```javascript
+const arr = [1, 2, 3];
+
+// 1. length = 0 — быстро, мутирует оригинальный массив
+arr.length = 0;
+
+// 2. splice — мутирует оригинальный массив
+arr.splice(0);
+
+// 3. Перезапись переменной — новый массив, оригинал (если есть другие ссылки) остаётся
+let a = [1, 2, 3];
+a = [];
+
+// 4. pop в цикле — работает, но медленно
+while (arr.length > 0) arr.pop();
+```
+
+**Рекомендация**: если не нужна мутация — `arr = []`. Если нужно очистить и сохранить ссылку для всех потребителей — `arr.length = 0` или `arr.splice(0)`.
 
 **Связанные задачи:**
 <!-- Связанных задач нет -->

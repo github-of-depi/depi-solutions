@@ -14,6 +14,8 @@
 - [Что такое геттеры и сеттеры?](#что-такое-геттеры-и-сеттеры)
 - [Что такое абстрактные классы?](#что-такое-абстрактные-классы)
 - [Что такое noImplicitAny и зачем включать strict?](#что-такое-noimplicitany-и-зачем-включать-strict)
+- [Что такое .d.ts файлы?](#что-такое-dts-файлы)
+- [Что такое source maps (.map файлы)?](#что-такое-source-maps-map-файлы)
 
 ---
 
@@ -330,3 +332,69 @@ function greet(name: string) { // OK
 **Материалы для изучения:**
 
 - [TypeScript: tsconfig reference — strict](https://www.typescriptlang.org/tsconfig#strict)
+
+---
+
+## Что такое .d.ts файлы?
+
+`.d.ts` (файлы объявлений типов) содержат только типы без реализации. Используются для типизации JavaScript-библиотек и модулей без TypeScript-источников.
+
+```typescript
+// math.d.ts — типы для пипа JS-библиотеки math.js
+export declare function add(a: number, b: number): number;
+export declare const PI: number;
+
+// Сам не содержит JavaScript-кода — только декларации
+```
+
+**Где встречаются:**
+- `@types/*` пакеты (`@types/react`, `@types/node`) — хранилище типов для популярных JS-библиотек
+- Автогенерация `tsc --declaration` — TypeScript сам создаёт для вашего пакета при сборке
+- `declare module` — добавление типов для модулей без типов (например, CSS-модули)
+
+```typescript
+// Типизация CSS-модулей
+declare module '*.module.css' {
+  const styles: Record<string, string>;
+  export default styles;
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+- [TypeScript: Declaration files](https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html)
+- [DefinitelyTyped: @types](https://github.com/DefinitelyTyped/DefinitelyTyped)
+
+---
+
+## Что такое source maps (.map файлы)?
+
+Source maps — файлы формата `.map`, содержащие сопоставление между позициями в оригинальном коде (например, TypeScript) и позициями в скомпилированном JavaScript. Позволяют DevTools браузера показывать оригинальный код при отладке.
+
+```
+// bundle.js.map — JSON-файл
+{
+  "version": 3,
+  "sources": ["src/utils.ts"],
+  "mappings": "AAAA,SAAS,...",  // кодировка позиций
+  "sourcesContent": ["const add = ..."] // оригинальный код
+}
+
+// Подключение: ссылка в конце bundle.js:
+//# sourceMappingURL=bundle.js.map
+```
+
+**Настройка в `tsconfig.json`:**
+- `"sourceMap": true` — генерировать `.map` рядом с `.js`
+- `"inlineSourceMap": true` — встроить карту прямо в `.js` файл
+
+В продакшн обычно выключают или ограничивают доступ к source maps, чтобы не раскрывать исходный код.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+- [TypeScript: tsconfig — sourceMap](https://www.typescriptlang.org/tsconfig#sourceMap)
+- [MDN: Using source maps](https://developer.mozilla.org/en-US/docs/Tools/Debugger/How_to/Use_a_source_map)

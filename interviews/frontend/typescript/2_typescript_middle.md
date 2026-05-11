@@ -14,6 +14,7 @@
 - [Union vs intersection типы?](#union-vs-intersection-типы)
 - [Что такое модули в TypeScript?](#что-такое-модули-в-typescript)
 - [Что такое декораторы в TypeScript?](#что-такое-декораторы-в-typescript)
+- [Что такое пространства имён (namespaces)?](#что-такое-пространства-имён-namespaces)
 
 ---
 
@@ -366,3 +367,38 @@ class AuthService {}
 **Материалы для изучения:**
 
 - [TypeScript: Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html)
+
+---
+
+## Что такое пространства имён (namespaces)?
+
+Namespace — устаревший способ организации кода в TypeScript, группирующий типы и функции под одним именем для избежания конфликтов имён в глобальном пространстве.
+
+```typescript
+namespace Validation {
+  export interface StringValidator {
+    isAcceptable(s: string): boolean;
+  }
+
+  export class LettersOnlyValidator implements StringValidator {
+    isAcceptable(s: string) {
+      return /^[A-Za-z]+$/.test(s);
+    }
+  }
+}
+
+const validator = new Validation.LettersOnlyValidator();
+validator.isAcceptable('hello'); // true
+```
+
+**Когда используются namespace:**
+- Работа с старым кодом, где нет модульной системы (legacy браузерные скрипты)
+- `declare namespace` в `.d.ts` файлах для типизации глобальных API
+
+**В современных проектах** предпочтительнее использовать **ES-модули** (`import`/`export`), которые обеспечивают tree-shaking, лучшую поддержку IDE и bundler-ов. Namespace — предшественник модульной системы.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+- [TypeScript: Namespaces](https://www.typescriptlang.org/docs/handbook/namespaces.html)
