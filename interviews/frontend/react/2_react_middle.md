@@ -527,3 +527,77 @@ function UserDetail() {
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Чем useLayoutEffect отличается от useEffect?
+
+Оба хука запускают побочные эффекты, но в разное время относительно отрисовки:
+
+| | `useEffect` | `useLayoutEffect` |
+|---|---|---|
+| Когда | После paint (асинхронно) | После DOM-мутаций, до paint (синхронно) |
+| Блокирует рендер | Нет | Да |
+| Применение | Запросы, подписки, логирование | Измерение DOM, синхронная анимация |
+
+```tsx
+// useEffect — не блокирует, пользователь видит промежуточный рендер
+useEffect(() => {
+  setHeight(ref.current.offsetHeight); // может вызвать видимый "прыжок"
+}, []);
+
+// useLayoutEffect — синхронно, до отрисовки, нет мерцания
+useLayoutEffect(() => {
+  setHeight(ref.current.offsetHeight); // высота установлена до paint
+}, []);
+```
+
+**Правило:** используй `useEffect` по умолчанию. `useLayoutEffect` — только когда нужно измерить DOM или синхронно предотвратить мерцание перед отрисовкой.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [React Docs: useLayoutEffect](https://react.dev/reference/react/useLayoutEffect)
+
+---
+
+## Что такое useReducer и когда его использовать?
+
+`useReducer` — хук для управления состоянием через чистую функцию-редюсер: `(state, action) => newState`. Аналог Redux-паттерна на уровне компонента.
+
+```tsx
+type State = { count: number; step: number };
+type Action =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'setStep'; payload: number };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'increment': return { ...state, count: state.count + state.step };
+    case 'decrement': return { ...state, count: state.count - state.step };
+    case 'setStep':   return { ...state, step: action.payload };
+    default: return state;
+  }
+}
+
+const [state, dispatch] = useReducer(reducer, { count: 0, step: 1 });
+
+dispatch({ type: 'increment' });
+dispatch({ type: 'setStep', payload: 5 });
+```
+
+**Когда предпочесть `useReducer` перед `useState`:**
+- Несколько связанных полей состояния, обновляемых вместе
+- Сложная логика переходов состояния
+- Следующее состояние зависит от предыдущего
+- Нужно вынести логику состояния наружу для тестирования
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [React Docs: useReducer](https://react.dev/reference/react/useReducer)
