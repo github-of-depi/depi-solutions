@@ -10,6 +10,14 @@
 - [Для чего используются data-атрибуты?](#для-чего-используются-data-атрибуты)
 - [Плюсы и минусы использования iframe?](#плюсы-и-минусы-использования-iframe)
 - [Для чего нужен meta viewport?](#для-чего-нужен-meta-viewport)
+- [HTML5 API — обзор?](#html5-api--обзор)
+- [Image map — что это и как работает?](#image-map--что-это-и-как-работает)
+- [HTML5 Web Workers?](#html5-web-workers)
+- [Что такое DOM?](#что-такое-dom)
+- [SSE (Server-Sent Events)?](#sse-server-sent-events)
+- [Как сделать кастомный чекбокс?](#как-сделать-кастомный-чекбокс)
+- [Drag and Drop API?](#drag-and-drop-api)
+- [HTML-шаблонизаторы (Pug)?](#html-шаблонизаторы-pug)
 
 ---
 
@@ -215,3 +223,307 @@ console.log(btn.dataset.action);  // "delete"
 **Материалы для изучения:**
 
 - [MDN: Мета-тег viewport](https://developer.mozilla.org/ru/docs/Web/HTML/Viewport_meta_tag)
+
+---
+
+## HTML5 API — обзор?
+
+HTML5 принёс широкий спектр браузерных API:
+
+| API | Назначение |
+|---|---|
+| **Geolocation** | `navigator.geolocation.getCurrentPosition()` |
+| **Web Storage** | `localStorage`, `sessionStorage` |
+| **IndexedDB** | База данных на клиенте |
+| **Web Workers** | Фоновые потоки |
+| **WebSockets** | Двухсторонняя связь |
+| **SSE** | Server-Sent Events — односторонний поток с сервера |
+| **Canvas API** | Рисование через JS |
+| **History API** | `pushState`, `replaceState` |
+| **Notifications** | `Notification.requestPermission()` |
+| **Drag and Drop** | Нативный драг |
+| **File API** | `FileReader`, `File`, `Blob` |
+| **Clipboard API** | `navigator.clipboard.readText/writeText` |
+| **Fullscreen API** | `element.requestFullscreen()` |
+| **Page Visibility** | `document.visibilityState`, `visibilitychange` |
+| **Web Speech** | Распознавание / синтез речи |
+| **Service Worker** | Фоновой скрипт, оффлайн, push |
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Image map — что это и как работает?
+
+**Image map** — изображение с кликабельными областями. Каждая область ведёт на отдельный URL.
+
+```html
+<img src="map.png" alt="Карта" usemap="#regions">
+
+<map name="regions">
+  <!-- rect: x1,y1, x2,y2 -->
+  <area shape="rect" coords="0,0,100,100"
+        href="/north" alt="Север">
+  <!-- circle: cx,cy,r -->
+  <area shape="circle" coords="200,150,50"
+        href="/center" alt="Центр">
+  <!-- poly: x1,y1,x2,y2,... -->
+  <area shape="poly" coords="120,50,180,50,150,100"
+        href="/south" alt="Юг">
+</map>
+```
+
+Сейчас практически не используется — заменяется SVG с `<a>` или CSS clip-path + position.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## HTML5 Web Workers?
+
+**Web Worker** — скрипт, выполняющийся в отдельном потоке (background thread), не блокируя главный поток UI. Доступа к DOM нет. Общение через `postMessage`/`onmessage`.
+
+```javascript
+// main.js
+const worker = new Worker('worker.js');
+worker.postMessage({ data: [1, 2, 3, 4, 5] });
+worker.onmessage = (e) => console.log('Result:', e.data);
+worker.onerror = (e) => console.error(e);
+// worker.terminate(); // стоп
+
+// worker.js
+self.onmessage = (e) => {
+  const result = e.data.data.reduce((a, b) => a + b, 0);
+  self.postMessage(result);
+};
+```
+
+**Виды:**
+- `Worker` — обычный, для тяжёлых вычислений
+- `SharedWorker` — один воркер на несколько вкладок
+- `ServiceWorker` — фоновой, перехватывает сеть, оффлайн, push-уведомления
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Что такое DOM?
+
+**DOM** (Document Object Model) — древовидная модель HTML/XML-документа в виде объектов. Браузер парсит HTML и строит DOM в памяти. JS манипулирует DOM через API `document`.
+
+```javascript
+// Выборка
+document.getElementById('id')
+document.querySelector('.class')
+document.querySelectorAll('div')
+
+// Навигация
+el.parentNode, el.children, el.firstElementChild
+el.nextElementSibling, el.previousElementSibling
+
+// Изменение
+el.textContent = 'text'
+el.innerHTML = '<b>html</b>'
+el.setAttribute('class', 'active')
+el.classList.add('open')
+el.style.color = 'red'
+
+// Создание / удаление
+const p = document.createElement('p')
+parent.appendChild(p)
+parent.removeChild(p)
+p.remove() // современный путь
+```
+
+**CSSOM** — аналогичное дерево для CSS. Браузер объединяет DOM + CSSOM в Render Tree для рендеринга.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## SSE (Server-Sent Events)?
+
+**SSE** — односторонный поток данных от сервера к клиенту по протоколу HTTP. Проще WebSocket, но только в одну сторону.
+
+```javascript
+// Клиент
+const es = new EventSource('/api/stream');
+
+es.onmessage = (e) => console.log(e.data);
+
+es.addEventListener('update', (e) => {
+  console.log('Событие update:', e.data);
+});
+
+es.onerror = () => console.error('SSE error');
+es.close(); // закрыть
+```
+
+```
+// Сервер: Content-Type: text/event-stream
+
+data: Привет\n\n
+event: update\ndata: {"time": 123}\n\n
+id: 42\nretry: 3000\ndata: переподключение через 3 с\n\n
+```
+
+**SSE vs WebSocket:** SSE проще (только HTTP), автопереподключение, подходит для пуш-уведомлений, ленты новостей. WebSocket — двусторонний, чаты/игры.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Как сделать кастомный чекбокс?
+
+CSS-стилизация нативного `<input type="checkbox">` ограничена. Решение: скрываем нативный чекбокс, стилизуем `<label>` как визуальный чекбокс через `::before`.
+
+```html
+<label class="checkbox">
+  <input type="checkbox" class="checkbox__input">
+  <span class="checkbox__mark"></span>
+  Принять условия
+</label>
+```
+
+```css
+.checkbox__input {
+  position: absolute;
+  opacity: 0;         /* скрыть, но оставить доступным для a11y */
+  width: 0; height: 0;
+}
+
+.checkbox__mark {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid #999;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+/* Состояние checked через соседний селектор */
+.checkbox__input:checked + .checkbox__mark {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* Галочка через ::after */
+.checkbox__input:checked + .checkbox__mark::after {
+  content: '';
+  display: block;
+  width: 5px; height: 10px;
+  border: 2px solid white;
+  border-top: none; border-left: none;
+  transform: rotate(45deg);
+  margin: 1px 0 0 4px;
+}
+
+/* Фокус для a11y */
+.checkbox__input:focus-visible + .checkbox__mark {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Drag and Drop API?
+
+Нативный HTML5 Drag and Drop API позволяет перетаскивать элементы.
+
+```html
+<div draggable="true" id="item">Перетащи</div>
+<div id="target">Зона сброса</div>
+```
+
+```javascript
+const item = document.getElementById('item');
+const target = document.getElementById('target');
+
+// Источник
+item.addEventListener('dragstart', (e) => {
+  e.dataTransfer.setData('text/plain', item.id);
+});
+
+// Цель
+target.addEventListener('dragover', (e) => {
+  e.preventDefault(); // обязательно!
+});
+
+target.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text/plain');
+  target.appendChild(document.getElementById(id));
+});
+```
+
+**События:** `dragstart`, `drag`, `dragend` (на источнике); `dragenter`, `dragover`, `dragleave`, `drop` (на цели).
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## HTML-шаблонизаторы (Pug)?
+
+**HTML-шаблонизатор** — препроцессор, компилирующий свой синтаксис в чистый HTML. **Pug** (раньше Jade) — самый популярный.
+
+```pug
+//- Pug
+doctype html
+html(lang="ru")
+  head
+    title Пример
+    link(rel="stylesheet" href="style.css")
+  body
+    header.site-header
+      nav
+        ul
+          each item in ['Home', 'About', 'Contact']
+            li: a(href=`/${item.toLowerCase()}`)= item
+    main
+      article
+        h1 Заголовок
+        p Текст #{вариабльные}
+        if condition
+          p Да
+        else
+          p Нет
+    include footer.pug
+```
+
+**Преимущества:** меньше бойлерплейта, вносимые `include`/`extends`/`block`, петли и циклы. Популярен в Node.js/Express. Сейчас компонентные фреймворки (React/Vue) почти вытеснили Pug.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

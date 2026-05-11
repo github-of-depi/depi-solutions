@@ -12,6 +12,15 @@
 - [Что такое React.memo?](#что-такое-reactmemo)
 - [Чем useLayoutEffect отличается от useEffect?](#чем-uselayouteffect-отличается-от-useeffect)
 - [Что такое useReducer и когда его использовать?](#что-такое-usereducer-и-когда-его-использовать)
+- [Методы жизненного цикла компонента?](#методы-жизненного-цикла-компонента)
+- [Что такое PureComponent?](#что-такое-purecomponent)
+- [Анимация в React?](#анимация-в-react)
+- [Flux архитектура?](#flux-архитектура)
+- [Отладка React и линтеры?](#отладка-react-и-линтеры)
+- [Ограничения React?](#ограничения-react)
+- [Refs в React?](#refs-в-react)
+- [Маршрутизация в React?](#маршрутизация-в-react)
+- [Преимущества React?](#преимущества-react)
 
 ---
 
@@ -240,3 +249,281 @@ dispatch({ type: 'setStep', payload: 5 });
 **Материалы для изучения:**
 
 - [React Docs: useReducer](https://react.dev/reference/react/useReducer)
+
+---
+
+## Методы жизненного цикла компонента?
+
+В **классовых компонентах** — методы жизненного цикла. В **функциональных** — имитируются через `useEffect`.
+
+```
+Монтирование:     constructor → render → componentDidMount
+Обновление:       render → componentDidUpdate
+Размонтирование:  componentWillUnmount
+Ошибка:           getDerivedStateFromError / componentDidCatch
+```
+
+```jsx
+// Классовый компонент
+class Timer extends React.Component {
+  componentDidMount()    { /* как useEffect(fn, []) */ }
+  componentDidUpdate(prevProps, prevState) { /* useEffect(fn, [deps]) */ }
+  componentWillUnmount() { /* return () => cleanup в useEffect */ }
+}
+
+// Функциональный эквивалент
+function Timer() {
+  useEffect(() => {
+    // componentDidMount
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id); // componentWillUnmount
+  }, []); // [] = только при монтировании
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Что такое PureComponent?
+
+`React.PureComponent` — классовый компонент, реализующий `shouldComponentUpdate` с **поверхностным сравнением** (shallow compare) props и state. Пропускает ре-рендер, если значения не изменились.
+
+```jsx
+// Устаревший способ (классовый)
+class MyComponent extends React.PureComponent {
+  render() { return <div>{this.props.name}</div>; }
+}
+
+// Современный эквивалент (функциональный)
+const MyComponent = React.memo(({ name }) => <div>{name}</div>);
+```
+
+**Ограничение:** поверхностное сравнение — одинаковые объекты по ссылке считаются равными. Мутации объектов не будут замечены.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Анимация в React?
+
+**CSS-переходы и анимации (простейший способ):**
+```css
+.fade-enter { opacity: 0; }
+.fade-enter-active { opacity: 1; transition: opacity 300ms; }
+```
+
+**React Transition Group** — управляет классами при монтировании/размонтировании:
+```jsx
+import { CSSTransition } from 'react-transition-group';
+<CSSTransition in={show} timeout={300} classNames="fade" unmountOnExit>
+  <div>Контент</div>
+</CSSTransition>
+```
+
+**Framer Motion** — декларативные анимации:
+```jsx
+import { motion } from 'framer-motion';
+<motion.div
+  initial={{ opacity: 0, y: -20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.3 }}
+>
+  Контент
+</motion.div>
+```
+
+**GSAP / Anime.js** — для сложных анимационных последовательностей через `useRef` + `useEffect`.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Flux архитектура?
+
+**Flux** — архитектурный паттерн, разработанный Facebook для управления состоянием в React-приложениях. Однонаправленный поток данных.
+
+**4 сущности:**
+```
+Action → Dispatcher → Store → View
+  ↑________________________________|
+```
+
+- **Action** — объект с типом и данными: `{ type: 'ADD_TODO', payload: text }`
+- **Dispatcher** — центральный хаб, рассылает action всем store
+- **Store** — содержит состояние и логику обработки действий
+- **View** — React-компоненты, подписанные на store
+
+**Сегодня:** оригинальный Flux почти не используется. Идеи реализованы в **Redux** (единый store + чистые reducers) и **Zustand**.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Отладка React и линтеры?
+
+**React DevTools** (расширение Chrome/Firefox):
+- Инспектор компонентов: props, state, hooks
+- Profiler: какие компоненты ре-рендерятся и сколько времени
+- Подсветка ре-рендеров
+
+**Линтеры:**
+- **ESLint** + `eslint-plugin-react-hooks` — правила хуков:
+  - Нельзя вызывать хуки внутри условий/циклов
+  - `exhaustive-deps` — предупреждение о пропущенных зависимостях `useEffect`
+- **eslint-plugin-react** — best practices компонентов
+- **TypeScript** — типовая безопасность props
+
+**Отладка в коде:**
+```jsx
+// Логирование рендеров
+console.log('render', props);
+
+// React.StrictMode — двойной вызов рендера в dev для поиска нечистых компонентов
+<React.StrictMode><App /></React.StrictMode>
+
+// why-did-you-render — библиотека для отслеживания лишних ре-рендеров
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Ограничения React?
+
+1. **Только UI** — не full framework (нет routing, DI, HTTP-клиента из коробки)
+2. **JSX** — нужна сборка (Babel/SWC/esbuild), нельзя в браузере без подготовки
+3. **Производительность** — частые ре-рендеры без оптимизаций (memo, useMemo)
+4. **Размер бандла** — react + react-dom ≈ 42kb gzip; Angular включает больше из коробки
+5. **setState асинхронный** — нельзя читать новое состояние сразу после вызова
+6. **Boilerplate** — управление состоянием, роутинг, data-fetching требуют отдельных решений
+7. **Скорость обучения** — hooks, JSX, reconciliation, Fiber — кривая обучения для новичков
+8. **Нет SSR из коробки** — нужен Next.js / Remix
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Refs в React?
+
+**useRef** возвращает изменяемый объект `{ current: ... }`, который сохраняется между рендерами и **не вызывает ре-рендер** при изменении.
+
+**Два применения:**
+```jsx
+// 1. Доступ к DOM-узлу
+function FocusInput() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focus = () => inputRef.current?.focus();
+
+  return (
+    <>
+      <input ref={inputRef} />
+      <button onClick={focus}>Фокус</button>
+    </>
+  );
+}
+
+// 2. Хранение значения между рендерами без ре-рендера
+function Timer() {
+  const timerId = useRef<number>(null);
+
+  useEffect(() => {
+    timerId.current = setInterval(tick, 1000);
+    return () => clearInterval(timerId.current!);
+  }, []);
+}
+```
+
+`forwardRef` — пробросить ref через компонент к DOM-элементу внутри него.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Маршрутизация в React?
+
+React не имеет встроенного роутинга. Стандартный вариант — **React Router** (v6+).
+
+```jsx
+import { BrowserRouter, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <nav>
+        <Link to="/">Главная</Link>
+        <Link to="/users">Пользователи</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<UserDetail />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function UserDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  // ...
+}
+```
+
+**Альтернативы:** TanStack Router (типобезопасный), Next.js App Router (file-based).
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Преимущества React?
+
+1. **Virtual DOM** — эффективное обновление только изменившихся частей UI
+2. **Компонентный подход** — переиспользование, изоляция, простота тестирования
+3. **Декларативность** — описываешь *что*, не *как*
+4. **Большая экосистема** — Redux, React Router, TanStack Query, Framer Motion и тысячи других
+5. **JSX** — HTML + JS в одном месте, удобно и типобезопасно с TypeScript
+6. **React Native** — тот же код для iOS и Android
+7. **Server Components** (React 19) — компоненты на сервере без JS в бандле
+8. **Большое комьюнити** — огромная база знаний, решений, специалистов
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

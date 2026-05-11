@@ -12,6 +12,15 @@
 - [Что такое Fragment и чем он лучше div-обёртки?](#что-такое-fragment-и-чем-он-лучше-div-обёртки)
 - [Что такое prop drilling и как его избежать?](#что-такое-prop-drilling-и-как-его-избежать)
 - [Способы условного рендеринга в React?](#способы-условного-рендеринга-в-react)
+- [Разница между элементом и компонентом?](#разница-между-элементом-и-компонентом)
+- [Как создать компонент в React?](#как-создать-компонент-в-react)
+- [Что такое prop children?](#что-такое-prop-children)
+- [Почему нельзя обновлять state напрямую?](#почему-нельзя-обновлять-state-напрямую)
+- [Что происходит при вызове setState?](#что-происходит-при-вызове-setstate)
+- [Чистая функция в React?](#чистая-функция-в-react)
+- [createElement и cloneElement?](#createelement-и-cloneelement)
+- [Синтетические события?](#синтетические-события)
+- [HTML vs React?](#html-vs-react)
 
 ---
 
@@ -249,3 +258,284 @@ const renderByRole = (role: string) => {
 **Материалы для изучения:**
 
 - [React Docs: Conditional rendering](https://react.dev/learn/conditional-rendering)
+
+---
+
+## Разница между элементом и компонентом?
+
+**Элемент** (React element) — простой неизменяемый объект, описывающий что нужно отрендерить. Результат JSX или `React.createElement()`:
+```jsx
+const el = <h1>Привет</h1>;
+// { type: 'h1', props: { children: 'Привет' }, ... }
+```
+
+**Компонент** — функция или класс, которая принимает props и возвращает элементы (или null). Компонент — «шаблон», элемент — «экземпляр» рендера.
+
+```jsx
+// Компонент (функция)
+function Greeting({ name }) {
+  return <h1>Привет, {name}!</h1>; // возвращает элемент
+}
+
+// Использование компонента создаёт элемент
+const el = <Greeting name="Алиса" />;
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Как создать компонент в React?
+
+**Функциональный компонент (рекомендуется):**
+```tsx
+// Простой
+function Button({ label, onClick }: { label: string; onClick: () => void }) {
+  return <button onClick={onClick}>{label}</button>;
+}
+
+// Стрелочная функция
+const Card = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="card">
+    <h2>{title}</h2>
+    {children}
+  </div>
+);
+
+export default Button;
+```
+
+**Правила:**
+- Имя начинается с **заглавной** буквы
+- Возвращает JSX или `null`
+- Один дефолтный экспорт или несколько именованных
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Что такое prop children?
+
+`children` — специальный prop, содержащий дочерние элементы, переданные между открывающим и закрывающим тегами компонента.
+
+```tsx
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="card">
+      <h2>{title}</h2>
+      <div className="card-body">{children}</div>
+    </div>
+  );
+}
+
+// Использование
+<Card title="Новость">
+  <p>Текст статьи</p>
+  <a href="/more">Читать далее</a>
+</Card>
+```
+
+`React.ReactNode` — тип для children: принимает JSX, строки, числа, массивы, `null`, `undefined`.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Почему нельзя обновлять state напрямую?
+
+Прямое изменение state не вызывает ре-рендер — React не знает, что что-то изменилось:
+
+```jsx
+// Плохо — React не знает об изменении
+this.state.count = 5;
+state.items.push(newItem);
+
+// Хорошо — React планирует ре-рендер
+this.setState({ count: 5 });
+setItems([...items, newItem]); // новая ссылка!
+```
+
+**Иммутабельность** — React сравнивает ссылки (`===`). Для объектов и массивов нужно создавать новый объект/массив, иначе React считает, что ничего не изменилось:
+
+```jsx
+// Плохо — та же ссылка
+const next = state.items;
+next.push(item);
+setItems(next); // React не ре-рендерит
+
+// Хорошо — новая ссылка
+setItems([...state.items, item]);
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Что происходит при вызове setState?
+
+1. React ставит обновление в **очередь** (не применяет сразу)
+2. В React 18 происходит **батчинг** — несколько `setState` в одном event handler объединяются в один ре-рендер
+3. React планирует ре-рендер компонента
+4. На следующем рендере компонент вызывается с новым значением state
+5. React сравнивает новый и предыдущий vDOM (reconciliation) → обновляет только изменившиеся части DOM
+
+```jsx
+// Оба вызова батчатся в один ре-рендер (React 18)
+function handleClick() {
+  setCount(c => c + 1); // не ре-рендерит сразу
+  setName('Alice');     // не ре-рендерит сразу
+  // ← один ре-рендер здесь
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Чистая функция в React?
+
+**Чистая функция** (pure function) — функция, которая при одинаковых аргументах всегда возвращает одинаковый результат и не производит побочных эффектов.
+
+React-компоненты должны быть чистыми функциями относительно props и state:
+
+```jsx
+// Чистый компонент — детерминированный рендер
+function Greeting({ name }) {
+  return <h1>Привет, {name}!</h1>; // только зависит от props
+}
+
+// Нечистый — побочный эффект в рендере (плохо!)
+function BadComponent() {
+  document.title = 'Обновление'; // ← нельзя в рендере
+  return <div />;
+}
+
+// Правильно — побочные эффекты в useEffect
+function GoodComponent() {
+  useEffect(() => { document.title = 'Обновление'; }, []);
+  return <div />;
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## createElement и cloneElement?
+
+**`React.createElement(type, props, ...children)`** — основная функция создания элементов (в которую компилируется JSX):
+```jsx
+// JSX
+const el = <Button color="blue">Нажми</Button>;
+// Эквивалентно:
+const el = React.createElement(Button, { color: 'blue' }, 'Нажми');
+```
+
+**`React.cloneElement(element, extraProps, ...children)`** — клонирует существующий элемент с дополнительными/переопределёнными props:
+```jsx
+function Toolbar({ children }) {
+  return React.Children.map(children, child =>
+    React.cloneElement(child, { size: 'sm' }) // добавляем size всем детям
+  );
+}
+
+<Toolbar>
+  <Button>Save</Button>   {/* получит size="sm" */}
+  <Button>Cancel</Button> {/* получит size="sm" */}
+</Toolbar>
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Синтетические события?
+
+React оборачивает нативные DOM-события в **SyntheticEvent** — кросс-браузерную обёртку с единым API.
+
+```jsx
+function Form() {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();         // работает во всех браузерах
+    console.log(e.target);      // SyntheticEvent
+    console.log(e.nativeEvent); // нативный DOM-event
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input onChange={handleChange} />
+    </form>
+  );
+}
+```
+
+React использует **event delegation** — обработчики вешаются на корневой DOM-узел, а не на каждый элемент. В React 17+ это корень приложения (`#root`), а не `document`.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## HTML vs React?
+
+**Ключевые отличия JSX от HTML:**
+
+| HTML | React/JSX |
+|---|---|
+| `class="..."` | `className="..."` |
+| `for="..."` | `htmlFor="..."` |
+| `onclick="fn()"` | `onClick={fn}` |
+| `style="color: red"` | `style={{ color: 'red' }}` |
+| Само-закрывающие: `<br>` | `<br />` |
+| Комментарии `<!-- -->` | `{/* */}` |
+
+**React** — декларативный подход: описываешь *что* должно отображаться. Браузерный DOM — императивный (`getElementById`, `innerHTML`).
+
+```jsx
+// HTML (императивно)
+document.getElementById('counter').textContent = count;
+
+// React (декларативно)
+return <span>{count}</span>; // React сам обновит DOM
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

@@ -11,6 +11,9 @@
 - [Как виртуализировать длинные списки?](#как-виртуализировать-длинные-списки)
 - [Что такое HOC и как его использовать?](#что-такое-hoc-и-как-его-использовать)
 - [Техники оптимизации производительности React?](#техники-оптимизации-производительности-react)
+- [Новые возможности React 18?](#новые-возможности-react-18)
+- [SSR в React?](#ssr-в-react)
+- [Где размещать асинхронные операции?](#где-размещать-асинхронные-операции)
 
 ---
 
@@ -243,3 +246,119 @@ function Parent() {
 **Материалы для изучения:**
 
 - [React Docs: Производительность](https://react.dev/learn/render-and-commit)
+
+---
+
+## Новые возможности React 18?
+
+**Автоматический батчинг** — теперь работает не только в event handlers, но и в setTimeout, Promise, fetch:
+```jsx
+setTimeout(() => {
+  setCount(c => c + 1);
+  setFlag(f => !f);
+  // Один ре-рендер (раньше — два)
+}, 0);
+```
+
+**Concurrent features:**
+- `startTransition` / `useTransition` — пометить обновление как некритическое
+- `useDeferredValue` — отложенное значение для тяжёлых вычислений
+
+**Новые хуки:**
+- `useId` — стабильный уникальный ID для SSR (нет гидрационного рассинхрона)
+- `useSyncExternalStore` — подписка на внешние сторы (для библиотек)
+- `useInsertionEffect` — для CSS-in-JS библиотек
+
+**Streaming SSR** — `renderToPipeableStream`: сервер стримит HTML по частям, Suspense-границы позволяют отдавать готовое, не ожидая медленных данных.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## SSR в React?
+
+**SSR** (Server-Side Rendering) — HTML генерируется на сервере, отправляется клиенту. Браузер получает готовый HTML (быстрый FCP), затем React «гидратирует» его (добавляет интерактивность).
+
+```
+Client (CSR):  Пустой HTML → загрузка JS → рендер → данные → видимый контент
+Server (SSR):  Готовый HTML → видимый контент → загрузка JS → гидратация
+```
+
+**Преимущества SSR:**
+- Лучший FCP и LCP (метрики Core Web Vitals)
+- SEO — поисковики видят контент без JS
+- Работает при отключённом JS
+
+**Недостатки:**
+- Нагрузка на сервер
+- TTFB (Time to First Byte) выше для динамических страниц
+- Гидратация добавляет сложность (hydration mismatch)
+
+**React + SSR:**
+- `react-dom/server`: `renderToString`, `renderToPipeableStream`
+- **Next.js** — production SSR на основе React
+- **Remix** — SSR + прогрессивное улучшение
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Где размещать асинхронные операции?
+
+**Основное правило:** побочные эффекты — в `useEffect`, не в теле компонента.
+
+```jsx
+// Плохо — fetch прямо в рендере
+function Users() {
+  fetch('/api/users'); // вызывается при каждом рендере!
+  return <div />;
+}
+
+// Хорошо — в useEffect
+function Users() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/users', { signal: controller.signal })
+      .then(r => r.json())
+      .then(setUsers)
+      .catch(err => { if (err.name !== 'AbortError') console.error(err); });
+    return () => controller.abort(); // отмена при размонтировании
+  }, []);
+
+  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;
+}
+```
+
+**Современный подход — data-fetching библиотеки:**
+- **TanStack Query** (`useQuery`) — кэширование, refetch, loading/error состояния
+- **SWR** — stale-while-revalidate стратегия
+- **Next.js Server Components** — async/await прямо в компоненте на сервере
+
+```jsx
+// TanStack Query
+function Users() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => fetch('/api/users').then(r => r.json()),
+  });
+  if (isLoading) return <Spinner />;
+  if (error) return <Error />;
+  return <ul>{data.map(u => <li key={u.id}>{u.name}</li>)}</ul>;
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

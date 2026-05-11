@@ -10,6 +10,14 @@
 - [Как обеспечить кроссбраузерность в 2025 году?](#как-обеспечить-кроссбраузерность-в-2025-году)
 - [Когда использовать translate() вместо position: absolute?](#когда-использовать-translate-вместо-position-absolute)
 - [Что такое CSS filter и как он влияет на stacking context?](#что-такое-css-filter-и-как-он-влияет-на-stacking-context)
+- [Минимизация и сжатие CSS?](#минимизация-и-сжатие-css)
+- [Уменьшение HTTP-запросов?](#уменьшение-http-запросов)
+- [Кэширование общих файлов?](#кэширование-общих-файлов)
+- [Lazy-loading ресурсов?](#lazy-loading-ресурсов)
+- [Затратные CSS-свойства для браузера?](#затратные-css-свойства-для-браузера)
+- [@page — стили для печати?](#page--стили-для-печати)
+- [Что такое CSSOM?](#что-такое-cssom)
+- [Отладка CSS?](#отладка-css)
 
 ---
 
@@ -205,3 +213,242 @@ element.addEventListener("animationend", () => el.style.willChange = "auto");
 **Материалы для изучения:**
 
 - [MDN: filter](https://developer.mozilla.org/ru/docs/Web/CSS/filter)
+
+---
+
+## Минимизация и сжатие CSS?
+
+**Минификация** — удаление пробелов, комментариев, сокращение цветов (`#ffffff` → `#fff`). Делают: PostCSS cssnano, LightningCSS, esbuild.
+
+**Сжатие** — Gzip/Brotli на уровне сервера/CDN. Brotli даёт 15–25% лучше чем Gzip.
+
+```bash
+# Проверить сжатие
+curl -H "Accept-Encoding: br" -I https://example.com/style.css
+# Content-Encoding: br
+
+# Build pipeline
+vite build  # встроенная минификация + tree-shaking
+```
+
+**Дополнительно:**
+- **PurgeCSS / UnCSS** — удаление неиспользуемых правил
+- **Critical CSS** — встраивать только необходимое inline, остальное async
+- **CSS-in-JS** — автоматически отправляет только используемые стили
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Уменьшение HTTP-запросов?
+
+1. **Объединение файлов** — bundler собирает CSS в один файл
+2. **CSS-спрайты** — иконки в одном изображении
+3. **Inline критические стили** — `<style>` в head
+4. **Данные в Base64** — маленькие иконки прямо в CSS
+5. **HTTP/2** — мультиплексирование, отдельные запросы менее критичны
+6. **CDN** — кэширование общих библиотек
+
+```css
+/* Inline небольшого SVG в CSS */
+.icon {
+  background-image: url("data:image/svg+xml,%3Csvg...%3E%3C/svg%3E");
+}
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Кэширование общих файлов?
+
+**Content-based hashing** — `styles.abc123.css`. При изменении хэш меняется, браузер скачивает заново. Без изменений — берёт из кэша бесконечно.
+
+```html
+<!-- Bundler генерирует: -->
+<link rel="stylesheet" href="/assets/index.a1b2c3d4.css">
+```
+
+**Cache-Control заголовки:**
+```
+Cache-Control: max-age=31536000, immutable  # для хэшированных файлов
+Cache-Control: no-cache                      # для index.html
+```
+
+**Service Worker** — программный контроль кэша, offline-поддержка.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Lazy-loading ресурсов?
+
+**Изображения:**
+```html
+<img src="image.jpg" loading="lazy" alt="">
+<!-- loading="lazy" — нативная поддержка Chrome/Firefox/Safari -->
+```
+
+**CSS-фоны (через Intersection Observer):**
+```javascript
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('loaded');
+      observer.unobserve(entry.target);
+    }
+  });
+});
+document.querySelectorAll('.lazy-bg').forEach(el => observer.observe(el));
+```
+
+```css
+.lazy-bg { background: #f0f0f0; }
+.lazy-bg.loaded { background-image: url('hero.jpg'); }
+```
+
+**Шрифты:** `font-display: optional` — не загружать если медленно.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Затратные CSS-свойства для браузера?
+
+**Дорогие** (вызывают layout/reflow):
+- `width`, `height`, `top`, `left`, `margin`, `padding`, `border`
+- `font-size`, `font-weight`, `overflow`, `display`, `position`
+
+**Средние** (только paint):
+- `color`, `background-color`, `border-color`, `box-shadow`
+- `visibility`, `outline`
+
+**Дешёвые** (только composite — GPU):
+- `transform`, `opacity`, `filter` (с некоторыми функциями)
+
+```css
+/* Плохо — анимировать через top/left */
+.moving { top: 100px; transition: top 0.3s; }
+
+/* Хорошо — анимировать через transform */
+.moving { transform: translateY(100px); transition: transform 0.3s; }
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## @page — стили для печати?
+
+```css
+/* Базовые print-стили */
+@media print {
+  nav, .sidebar, .ads { display: none; }
+  body { font-size: 12pt; color: black; }
+  a::after { content: ' (' attr(href) ')'; }
+}
+
+/* @page — настройки страницы */
+@page {
+  size: A4 portrait;
+  margin: 2cm;
+}
+
+@page :first {
+  margin-top: 5cm; /* особые отступы для первой страницы */
+}
+
+/* Управление разрывами */
+h2 { break-before: page; }        /* новая страница перед h2 */
+.keep-together { break-inside: avoid; } /* не разрывать блок */
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Что такое CSSOM?
+
+**CSSOM** (CSS Object Model) — дерево CSS-правил в памяти, аналог DOM для HTML. Браузер строит CSSOM при парсинге CSS. Вместе с DOM формирует **Render Tree**.
+
+```javascript
+// Доступ к CSSOM через JS
+const sheets = document.styleSheets;
+const rules = sheets[0].cssRules;
+
+// Чтение вычисленных стилей
+const computed = window.getComputedStyle(element);
+computed.getPropertyValue('color'); // 'rgb(0, 0, 0)'
+
+// Динамическое изменение
+element.style.color = 'red'; // inline стиль
+
+// CSSStyleDeclaration
+document.styleSheets[0].insertRule('.new { color: blue; }', 0);
+```
+
+**Блокировка рендеринга:** браузер не рендерит страницу, пока не построит CSSOM. Поэтому CSS должен загружаться быстро. `<link>` в `<head>` — страница ждёт загрузки CSS перед рендерингом.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Отладка CSS?
+
+**Chrome DevTools:**
+- **Elements → Styles** — все применённые правила с источником
+- **Computed** — итоговые вычисленные значения
+- **Layout** — Box Model визуально
+- **Layers** — compositor layers
+- **Coverage** — неиспользуемые CSS-правила (Coverage tab)
+
+**Полезные приёмы:**
+```css
+/* Временная подсветка всех блоков */
+* { outline: 1px solid red !important; }
+
+/* Найти overflow */
+* { outline: 1px solid rgba(255,0,0,0.2); }
+```
+
+**Специфичность в DevTools:** зачёркнутые правила = перебиты правилом с большей специфичностью.
+
+**CSS Custom Properties отладка:**
+```javascript
+getComputedStyle(el).getPropertyValue('--color'); // читать
+el.style.setProperty('--color', 'blue');           // писать
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

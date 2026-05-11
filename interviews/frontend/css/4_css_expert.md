@@ -7,6 +7,7 @@
 - [Как строить scalable CSS архитектуру для больших проектов?](#как-строить-scalable-css-архитектуру-для-больших-проектов)
 - [Что такое логические свойства CSS?](#что-такое-логические-свойства-css)
 - [Как работает subgrid?](#как-работает-subgrid)
+- [Миксины (SASS mixins)?](#миксины-sass-mixins)
 
 ---
 
@@ -99,3 +100,55 @@ Layout (Flow Layout) — браузер вычисляет позиции и р�
 
 **Материалы для изучения:**
 <!-- Материалы не добавлены -->
+
+---
+
+## Миксины (SASS mixins)?
+
+**Mixin** в SASS/SCSS — переиспользуемый блок CSS с параметрами. Аналог функции. Компилируется в обычный CSS.
+
+```scss
+// Определение
+@mixin flex-center($direction: row) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: $direction;
+}
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'sm' {
+    @media (min-width: 640px) { @content; }
+  } @else if $breakpoint == 'md' {
+    @media (min-width: 768px) { @content; }
+  }
+}
+
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Использование
+.hero {
+  @include flex-center(column);
+  @include respond-to('md') { flex-direction: row; }
+}
+
+.title { @include truncate(2); }
+```
+
+Нативных миксинов в CSS нет — поэтому SASS/SCSS по-прежнему актуальны в крупных проектах.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [Sass: @mixin и @include](https://sass-lang.com/documentation/at-rules/mixin/)
