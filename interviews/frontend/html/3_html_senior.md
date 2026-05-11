@@ -9,6 +9,13 @@
 - [Атрибуты inputmode, enterkeyhint и capture?](#атрибуты-inputmode-enterkeyhint-и-capture)
 - [Особенности стилизации SVG в HTML?](#особенности-стилизации-svg-в-html)
 - [Чем отличается iframe от embed?](#чем-отличается-iframe-от-embed)
+- [Что такое PWA (прогрессивное веб-приложение)?](#что-такое-pwa-прогрессивное-веб-приложение)
+- [Email-вёрстка — особенности?](#email-вёрстка--особенности)
+- [Мультиязычность (i18n) в HTML?](#мультиязычность-i18n-в-html)
+- [Как происходит загрузка сайта?](#как-происходит-загрузка-сайта)
+- [SSR — преимущества и недостатки?](#ssr--преимущества-и-недостатки)
+- [Изящная деградация и постепенное улучшение?](#изящная-деградация-и-постепенное-улучшение)
+- [Google Lighthouse — что такое?](#google-lighthouse--что-такое)
 
 ---
 
@@ -268,3 +275,223 @@ svg path {
 
 - [MDN: iframe](https://developer.mozilla.org/ru/docs/Web/HTML/Element/iframe)
 - [MDN: embed](https://developer.mozilla.org/ru/docs/Web/HTML/Element/embed)
+
+---
+
+## Что такое PWA (прогрессивное веб-приложение)?
+
+**PWA** (Progressive Web App) — веб-приложение, использующее современные браузерные API для работы как нативное приложение: оффлайн режим, инсталляция, push-уведомления.
+
+**Основные компоненты:**
+1. **HTTPS** — обязательное условие
+2. **Web App Manifest** (`manifest.json`) — метаданные приложения
+3. **Service Worker** — фоновой скрипт, кэширование, оффлайн
+
+```json
+// manifest.json
+{
+  "name": "Моё Приложение",
+  "short_name": "App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+}
+```
+
+```html
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2563eb">
+```
+
+**Преимущества:** работа оффлайн, добавление на рабочий стол, push-уведомления, один кодовая база. **Недостатки:** ограниченный доступ к аппаратным API, не в App Store (Apple), хуже на iOS.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [web.dev: Progressive Web Apps](https://web.dev/progressive-web-apps/)
+
+---
+
+## Email-вёрстка — особенности?
+
+Email-клиенты (Гмайл, Аутлук) имеют очень слабую поддержку CSS. Основные правила:
+
+- **Только инлайн-стили** — `style="..."` на каждом элементе
+- **Таблицы для разметки** — flexbox/grid не поддерживаются в старых клиентах
+- **Ширина 600-640px** — оптимально для десктопа
+- **Атрибут `bgcolor`**, `align`, `cellpadding` — всё ещё работают
+- **`<img>` с явным шириной/высотой** — избегать разъезжаний
+- **Fallback шрифты** — `Arial`, `Georgia` (веб-шрифты не гарантированы)
+
+```html
+<!-- Базовая структура -->
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if mso]><style>td{font-family:Arial,sans-serif}</style><![endif]-->
+</head>
+<body>
+  <table width="600" cellpadding="0" cellspacing="0" align="center">
+    <tr>
+      <td bgcolor="#ffffff" style="padding:20px;font-family:Arial,sans-serif">
+        <h1 style="color:#333;font-size:24px">Заголовок</h1>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+```
+
+Инструменты: MJML, Foundation for Emails — преобразуют высокоуровневый шаблон в совместимый HTML.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Мультиязычность (i18n) в HTML?
+
+```html
+<!-- lang на html — основной язык -->
+<html lang="ru">
+
+<!-- lang на отдельном фрагменте -->
+<p lang="en">Hello, World!</p>
+
+<!-- hreflang: альтернативные версии страницы для SEO -->
+<link rel="alternate" hreflang="en" href="https://example.com/en/">
+<link rel="alternate" hreflang="ru" href="https://example.com/ru/">
+<link rel="alternate" hreflang="x-default" href="https://example.com/">
+
+<!-- dir: направление текста -->
+<html lang="ar" dir="rtl"> <!-- арабский - справа налево -->
+```
+
+**Практики i18n:**
+- `Intl.DateTimeFormat`, `Intl.NumberFormat` — локализация дат и чисел
+- `i18next`, `react-i18next` — популярные библиотеки
+- `<meta charset="UTF-8">` — обязательно для мультиязычных сайтов
+- Pluralization — множественное число отличается по языкам
+- Картинки без встроенного текста (пусть шаблон принимает любой длины текст)
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Как происходит загрузка сайта?
+
+1. **DNS lookup** — разрешение домена в IP
+2. **TCP handshake** — установка соединения
+3. **TLS handshake** — HTTPS шифрование (если HTTPS)
+4. **HTTP request** — запрос HTML-документа
+5. **Парсинг HTML** — браузер строит DOM-дерево
+6. **Загрузка CSS** — строится CSSOM
+7. **Загрузка JS** — выполняется скрипт
+8. **Render Tree** — DOM + CSSOM → дерево отображаемых элементов
+9. **Layout** — расчёт геометрии
+10. **Paint + Composite** — отрисовка пикселей на экран
+
+**Ключевые метрики:** FCP (First Contentful Paint), LCP (Largest Contentful Paint), TTI (Time to Interactive), CLS (Cumulative Layout Shift) — часть Core Web Vitals.
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## SSR — преимущества и недостатки?
+
+**SSR** (Server-Side Rendering) — HTML-страница генерируется на сервере при каждом запросе.
+
+| | SSR | CSR |
+|---|---|---|
+| **First load** | Быстрый FCP | Медленный FCP |
+| **SEO** | Отличное | Требует усилий |
+| **Нагрузка сервера** | Высокая | Низкая |
+| **Навигация** | Перезагрузка страниц | Instant (SPA) |
+
+**Гибридные подходы:**
+- **SSG** (Static Site Generation) — HTML генерируется при сборке, Next.js `getStaticProps`
+- **ISR** (Incremental Static Regeneration) — перегенерация по запросу
+- **Hydration** — привязка JS к готовому HTML (задержка TTI!)
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Изящная деградация и постепенное улучшение?
+
+**Изящная деградация** (Graceful Degradation) — сначала разрабатывается полная версия для современных браузеров, затем добавляются фоллбэки для старых.
+
+**Постепенное улучшение** (Progressive Enhancement) — базовый функционал работает всюду, современные браузеры получают улучшенный UX.
+
+```html
+<!-- Постепенное улучшение: -->
+<!-- Базовый HTML ссылка -->
+<a href="/purchase">Купить</a>
+<!-- JavaScript добавляет модальное окно, если доступен -->
+```
+
+```css
+/* Изящная деградация: */
+/* Новые браузеры используют container queries */
+@container (min-width: 400px) { .card { flex-direction: row; } }
+/* Старые браузеры просто покажут одну колонку */
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Google Lighthouse — что такое?
+
+**Google Lighthouse** — автоматизированный инструмент аудита качества веб-страниц. Встроен в Chrome DevTools (вкладка "Lighthouse").
+
+**5 категорий оценки (0–100):**
+
+| Категория | Что проверяет |
+|---|---|
+| **Performance** | LCP, FID/INP, CLS, FCP, TTFB |
+| **Accessibility** | ARIA, контраст, alt, фокус |
+| **Best Practices** | HTTPS, уязвимости, API |
+| **SEO** | meta, hreflang, индексирование |
+| **PWA** | manifest, service worker |
+
+```bash
+# CLI
+npx lighthouse https://example.com --output=html --output-path=report.html
+```
+
+**Core Web Vitals** (ключевые метрики для Google):
+- **LCP** (≤ 2.5s) — Largest Contentful Paint
+- **INP** (≤ 200ms) — Interaction to Next Paint (заменил FID)
+- **CLS** (≤ 0.1) — Cumulative Layout Shift
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [web.dev: Lighthouse](https://web.dev/lighthouse-performance/)

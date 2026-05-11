@@ -12,6 +12,7 @@
 - [Как правильно использовать заголовки H1–H6 для доступности?](#как-правильно-использовать-заголовки-h1h6-для-доступности)
 - [Правила работы с цветом для обеспечения доступности?](#правила-работы-с-цветом-для-обеспечения-доступности)
 - [Рекомендации по доступности мультимедийного контента?](#рекомендации-по-доступности-мультимедийного-контента)
+- [Что такое Storybook и как он помогает при разработке UI-кита?](#что-такое-storybook-и-как-он-помогает-при-разработке-ui-кита)
 
 ---
 
@@ -266,3 +267,81 @@ WCAG определяет минимальные требования к кон�
 
 - [WCAG 1.2: Time-based Media](https://www.w3.org/TR/WCAG21/#time-based-media)
 - [WebAIM: Captions, Transcripts, and Audio Descriptions](https://webaim.org/techniques/captions/)
+
+---
+
+## Что такое Storybook и как он помогает при разработке UI-кита?
+
+**Storybook** — инструмент для разработки UI-компонентов в изоляции от приложения. Каждый компонент представляется в виде набора историй (stories) — конкретных состояний/вариаций.
+
+**Основные преимущества:**
+- Разработка в изоляции (Component-Driven Development)
+- Живая документация для дизайнеров, PM, других разработчиков
+- Автоматическое аврегрессионное тестирование (снимки, интеракции)
+- Проверка a11y через addon-a11y
+
+**Story файл (CSF 3.0 формат):**
+```typescript
+// Button.stories.tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from './Button';
+
+const meta = {
+  title: 'UI/Button',
+  component: Button,
+  parameters: {
+    layout: 'centered',
+    a11y: { disable: false }, // включаем a11y addon
+  },
+  argTypes: {
+    variant: { control: 'select', options: ['default', 'destructive', 'outline'] },
+    disabled: { control: 'boolean' },
+  },
+} satisfies Meta<typeof Button>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: { children: 'Нажми меня' },
+};
+
+export const Destructive: Story = {
+  args: { children: 'Удалить', variant: 'destructive' },
+};
+
+export const Disabled: Story = {
+  args: { children: 'Недоступно', disabled: true },
+};
+```
+
+**Addon-a11y** — автоматическая проверка доступности в каждой story через axe-core:
+- ARIA атрибуты
+- Контраст цвета
+- Focusable элементы
+- Метка изображений
+
+**Interaction Testing (Play function):**
+```typescript
+export const ClickTest: Story = {
+  args: { children: 'Кликни меня' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button'));
+    await expect(canvas.getByText('Нажато!')).toBeInTheDocument();
+  },
+};
+```
+
+**Рабочий процесс:**
+1. Разработка компонента в Storybook (без приложения)
+2. Создание stories для каждого варианта (состояния, edge cases)
+3. Проверка a11y через addon-a11y
+4. Visual regression через Chromatic / Percy
+5. Интеграция в приложение
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->

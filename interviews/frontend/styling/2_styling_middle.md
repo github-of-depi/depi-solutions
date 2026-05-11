@@ -8,6 +8,7 @@
 - [Что такое design tokens?](#что-такое-design-tokens)
 - [CSS-in-JS производительность — в чём проблема?](#css-in-js-производительность--в-чём-проблема)
 - [Что такое zero-runtime CSS-in-JS?](#что-такое-zero-runtime-css-in-js)
+- [Что такое shadcn/ui и чем отличается от MUI/AntD?](#что-такое-shadcnui-и-чем-отличается-от-muiantd)
 
 ---
 
@@ -115,6 +116,66 @@ export const button = style({
   selectors: { "&:hover": { background: vars.color.brandDark } },
 });
 ```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Что такое shadcn/ui и чем отличается от MUI/AntD?
+
+**shadcn/ui** — не библиотека компонентов, а коллекция готовых компонентов которые копируются прямо в проект. Основана на Radix UI (headless) + Tailwind CSS.
+
+**Ключевое отличие:**
+```
+MUI/AntD: npm install → пакет в node_modules → вы зависите от него
+shadcn/ui: npx shadcn add button → файл Button.tsx в вашем проекте → полный контроль
+```
+
+**Как добавить компонент:**
+```bash
+npx shadcn@latest add button
+npx shadcn@latest add dialog
+npx shadcn@latest add form
+```
+После этого в `src/components/ui/button.tsx` появляется код компонента, который можно редактировать как угодно.
+
+**Структура компонента (Button):**
+```tsx
+// src/components/ui/button.tsx
+import { cva } from 'class-variance-authority';
+
+const buttonVariants = cva(
+  'inline-flex items-center rounded-md text-sm font-medium', // базовые стили
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        destructive: 'bg-destructive text-destructive-foreground',
+        outline: 'border border-input bg-background',
+      },
+      size: { default: 'h-10 px-4', sm: 'h-9 px-3', lg: 'h-11 px-8' },
+    },
+    defaultVariants: { variant: 'default', size: 'default' },
+  }
+);
+```
+
+**Сравнение:**
+| | shadcn/ui | MUI | AntD |
+|---|---|---|---|
+| Установка | Копирует код | npm пакет | npm пакет |
+| Кастомизация | Полная (ваш файл) | Тема + sx prop | Токены + override |
+| Bundle size | Только то что взяли | Большой | Большой |
+| Зависимость | Нет (ваш файл) | Да | Да |
+| Headless | Да (Radix) | Нет | Нет |
+| Стилизация | Tailwind | CSS-in-JS | LESS |
+
+**Когда выбрать shadcn/ui:** проект с Tailwind, нужна максимальная гибкость, не хочется vendor lock-in.
+**Когда MUI/AntD:** нужен богатый готовый UI с минимальными усилиями, корпоративные проекты.
 
 **Связанные задачи:**
 <!-- Связанных задач нет -->

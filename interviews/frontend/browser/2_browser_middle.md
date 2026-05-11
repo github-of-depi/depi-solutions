@@ -11,6 +11,9 @@
 - [Что такое requestAnimationFrame?](#что-такое-requestanimationframe)
 - [Canvas vs SVG — в чём разница?](#canvas-vs-svg--в-чём-разница)
 - [Фазы рендеринга браузера и почему transform быстрее top/left?](#фазы-рендеринга-браузера-и-почему-transform-быстрее-topleft)
+- [Что такое event delegation?](#что-такое-event-delegation)
+- [Как удалить обработчик событий?](#как-удалить-обработчик-событий)
+- [URLSearchParams — как получить параметры URL?](#urlsearchparams--как-получить-параметры-url)
 
 ---
 
@@ -194,3 +197,121 @@ Browser rendering pipeline состоит из пяти этапов:
 
 - [MDN: CSS will-change](https://developer.mozilla.org/ru/docs/Web/CSS/will-change)
 - [web.dev: Rendering performance](https://web.dev/rendering-performance/)
+
+---
+
+## Что такое event delegation?
+
+**Event delegation** (делегирование событий) — паттерн, при котором один обработчик устанавливается на родительский элемент вместо отдельных обработчиков на каждом дочернем. Основан на **всплытии событий (event bubbling)**.
+
+```html
+<ul id="list">
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>
+```
+
+```javascript
+// Без делегации: 3 обработчика
+list.querySelectorAll('li').forEach(li => {
+  li.addEventListener('click', handleClick);
+});
+
+// С делегацией: один обработчик
+document.getElementById('list').addEventListener('click', (event) => {
+  // Определяем на какой цель клик
+  if (event.target.tagName === 'LI') {
+    console.log(event.target.textContent);
+  }
+});
+```
+
+**Преимущества:**
+- Меньше памяти (один обработчик вместо N)
+- Работает с динамически добавленными элементами
+- Не нужно убирать обработчики при удалении элементов
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## Как удалить обработчик событий?
+
+Для удаления обработчика необходимо сохранить **ссылку на ту же функцию**, что была зарегистрирована. `removeEventListener` не работает с анонимными функциями!
+
+```javascript
+// Неправильно — нельзя удалить: каждый раз создаётся новая функция
+el.addEventListener('click', () => doSomething());
+el.removeEventListener('click', () => doSomething()); // не работает!
+
+// Правильно — сохранить ссылку
+function handleClick(e) { doSomething(e); }
+
+el.addEventListener('click', handleClick);
+el.removeEventListener('click', handleClick); // работает!
+
+// AbortController (ES2022) — отмена нескольких обработчиков сразу
+const controller = new AbortController();
+
+el.addEventListener('click', handleClick, { signal: controller.signal });
+el.addEventListener('keydown', handleKey, { signal: controller.signal });
+
+controller.abort(); // удалит оба обработчика сразу
+
+// once: true — автоудаление после первого вызова
+el.addEventListener('click', handleOnce, { once: true });
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+<!-- Материалы не добавлены -->
+
+---
+
+## URLSearchParams — как получить параметры URL?
+
+**`URLSearchParams`** — встроенный API для работы с параметрами query string. Часто используется совместно с `URL`.
+
+```javascript
+// Чтение параметров текущей страницы
+// URL: https://example.com/search?query=js&page=2&sort=asc
+
+const params = new URLSearchParams(window.location.search);
+params.get('query');    // 'js'
+params.get('page');     // '2' (всегда строка!)
+params.get('sort');     // 'asc'
+params.get('missing');  // null
+params.has('query');    // true
+
+// Итерация
+for (const [key, val] of params) {
+  console.log(key, val);
+}
+
+// Создание / модификация
+params.set('page', '3');
+params.append('tag', 'frontend');
+params.delete('sort');
+
+params.toString(); // 'query=js&page=3&tag=frontend'
+
+// С URL API
+const url = new URL('https://example.com/search?q=test&page=1');
+url.searchParams.get('q');  // 'test'
+url.searchParams.set('page', '2');
+console.log(url.toString()); // https://example.com/search?q=test&page=2
+```
+
+**Связанные задачи:**
+<!-- Связанных задач нет -->
+
+**Материалы для изучения:**
+
+- [MDN: URLSearchParams](https://developer.mozilla.org/ru/docs/Web/API/URLSearchParams)
