@@ -6,8 +6,9 @@
 
 | | 🟢 Junior | 🔵 Middle | 🟠 Senior | 🔴 Expert |
 |--|-----------|-----------|-----------|-----------|
-| **Frontend** | [→](frontend/junior.md) | [→](frontend/middle.md) | [→](frontend/senior.md) | [→](frontend/expert.md) |
-| **Backend** | [→](backend/junior.md) | [→](backend/middle.md) | [→](backend/senior.md) | [→](backend/expert.md) |
+| **Frontend** | [→](frontend/1_junior.md) | [→](frontend/2_middle.md) | [→](frontend/3_senior.md) | [→](frontend/4_expert.md) |
+| **Backend** | [→](backend/1_junior.md) | [→](backend/2_middle.md) | [→](backend/3_senior.md) | [→](backend/4_expert.md) |
+| **AI Engineer** | [→](ai/1_junior.md) | [→](ai/2_middle.md) | [→](ai/3_senior.md) | [→](ai/4_expert.md) |
 
 ---
 
@@ -87,3 +88,22 @@
 | Node.js | [L1](../interviews/backend/nodejs/1_nodejs_junior.md) | [L2](../interviews/backend/nodejs/2_nodejs_middle.md) | [L3](../interviews/backend/nodejs/3_nodejs_senior.md) | [L4](../interviews/backend/nodejs/4_nodejs_expert.md) |
 | OOP | [L1](../interviews/backend/oop/1_oop_junior.md) | [L2](../interviews/backend/oop/2_oop_middle.md) | [L3](../interviews/backend/oop/3_oop_senior.md) | [L4](../interviews/backend/oop/4_oop_expert.md) |
 | SQL | [L1](../interviews/backend/sql/1_sql_junior.md) | [L2](../interviews/backend/sql/2_sql_middle.md) | [L3](../interviews/backend/sql/3_sql_senior.md) | [L4](../interviews/backend/sql/4_sql_expert.md) |
+
+---
+
+## 🤖 AI Engineer
+
+### Ядро
+
+| Тема | 🟢 Junior | 🔵 Middle | 🟠 Senior | 🔴 Expert |
+|------|-----------|-----------|-----------|----------|
+| LLM | [L1](../interviews/ai/llm/1_llm_junior.md) | [L2](../interviews/ai/llm/2_llm_middle.md) | [L3](../interviews/ai/llm/3_llm_senior.md) | [L4](../interviews/ai/llm/4_llm_expert.md) |
+| Prompt Engineering | [L1](../interviews/ai/prompt-engineering/1_prompt-engineering_junior.md) | [L2](../interviews/ai/prompt-engineering/2_prompt-engineering_middle.md) | [L3](../interviews/ai/prompt-engineering/3_prompt-engineering_senior.md) | [L4](../interviews/ai/prompt-engineering/4_prompt-engineering_expert.md) |
+| RAG | [L1](../interviews/ai/rag/1_rag_junior.md) | [L2](../interviews/ai/rag/2_rag_middle.md) | [L3](../interviews/ai/rag/3_rag_senior.md) | [L4](../interviews/ai/rag/4_rag_expert.md) |
+| AI Agents | [L1](../interviews/ai/agents/1_agents_junior.md) | [L2](../interviews/ai/agents/2_agents_middle.md) | [L3](../interviews/ai/agents/3_agents_senior.md) | [L4](../interviews/ai/agents/4_agents_expert.md) |
+| Fine-Tuning | [L1](../interviews/ai/fine-tuning/1_fine-tuning_junior.md) | [L2](../interviews/ai/fine-tuning/2_fine-tuning_middle.md) | [L3](../interviews/ai/fine-tuning/3_fine-tuning_senior.md) | [L4](../interviews/ai/fine-tuning/4_fine-tuning_expert.md) |
+| Vector Databases | [L1](../interviews/ai/vector-databases/1_vector-databases_junior.md) | [L2](../interviews/ai/vector-databases/2_vector-databases_middle.md) | [L3](../interviews/ai/vector-databases/3_vector-databases_senior.md) | [L4](../interviews/ai/vector-databases/4_vector-databases_expert.md) |
+| LLMOps | [L1](../interviews/ai/llmops/1_llmops_junior.md) | [L2](../interviews/ai/llmops/2_llmops_middle.md) | [L3](../interviews/ai/llmops/3_llmops_senior.md) | [L4](../interviews/ai/llmops/4_llmops_expert.md) |
+| Evaluation | [L1](../interviews/ai/evaluation/1_evaluation_junior.md) | [L2](../interviews/ai/evaluation/2_evaluation_middle.md) | [L3](../interviews/ai/evaluation/3_evaluation_senior.md) | [L4](../interviews/ai/evaluation/4_evaluation_expert.md) |
+| Safety & Ethics | [L1](../interviews/ai/safety/1_safety_junior.md) | [L2](../interviews/ai/safety/2_safety_middle.md) | [L3](../interviews/ai/safety/3_safety_senior.md) | [L4](../interviews/ai/safety/4_safety_expert.md) |
+| Coding with AI | [L1](../interviews/ai/coding-with-ai/1_coding-with-ai_junior.md) | [L2](../interviews/ai/coding-with-ai/2_coding-with-ai_middle.md) | [L3](../interviews/ai/coding-with-ai/3_coding-with-ai_senior.md) | [L4](../interviews/ai/coding-with-ai/4_coding-with-ai_expert.md) |
