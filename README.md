@@ -6,6 +6,10 @@
 
 ## Что здесь есть
 
+### `roadmap/` — карта знаний по уровням
+
+Накопительные чеклисты: что нужно знать на каждом уровне (Junior → Middle → Senior → Expert). Каждый пункт — прямая ссылка на соответствующий файл с вопросами.
+
 ### `interviews/` — вопросы и ответы
 
 Теоретические вопросы, разбитые по темам и уровням сложности. Каждый файл — это отдельный уровень одной темы: Junior, Middle, Senior, Expert.
@@ -18,12 +22,29 @@
 
 Промпты, инструкции и шаблоны для GitHub Copilot и Cursor — подключай к своим проектам.
 
+### `links/` — полезные ресурсы
+
+Подборка ссылок по категориям: Interview Prep, Learning, AI Tools, Architecture и другие.
+
 ---
 
 ## Структура репозитория
 
 ```
 depi-solutions/
+├── roadmap/                     # Карта знаний по уровням
+│   ├── README.md                # Полная матрица тем × уровней
+│   ├── frontend/
+│   │   ├── junior.md
+│   │   ├── middle.md
+│   │   ├── senior.md
+│   │   └── expert.md
+│   └── backend/
+│       ├── junior.md
+│       ├── middle.md
+│       ├── senior.md
+│       └── expert.md
+│
 ├── interviews/                  # Вопросы и ответы (Q&A)
 │   ├── frontend/
 │   │   ├── react/
@@ -31,32 +52,79 @@ depi-solutions/
 │   │   │   ├── 2_react_middle.md
 │   │   │   ├── 3_react_senior.md
 │   │   │   └── 4_react_expert.md
-│   │   ├── typescript/
 │   │   ├── javascript/
-│   │   ├── nextjs/
+│   │   ├── typescript/
 │   │   ├── css/
-│   │   └── …
+│   │   ├── html/
+│   │   ├── nextjs/
+│   │   ├── browser/
+│   │   ├── performance/
+│   │   ├── state-management/
+│   │   ├── styling/
+│   │   ├── tooling/
+│   │   ├── forms/
+│   │   └── canvas/
 │   ├── data-and-api/
+│   │   ├── rest/
+│   │   ├── auth/
+│   │   ├── graphql/
+│   │   ├── websockets/
+│   │   └── tanstack-query/
 │   ├── architecture/
+│   │   ├── patterns/
+│   │   ├── fsd/
+│   │   ├── component-design/
+│   │   ├── system-design/
+│   │   ├── micro-frontends/
+│   │   └── adr/
 │   ├── testing/
+│   │   ├── unit/
+│   │   ├── e2e/
+│   │   ├── security/
+│   │   ├── a11y/
+│   │   └── code-review/
 │   ├── devops/
-│   └── backend/
+│   │   ├── git/
+│   │   ├── ci-cd/
+│   │   ├── docker/
+│   │   └── cloud/
+│   ├── backend/
+│   │   ├── nodejs/
+│   │   ├── oop/
+│   │   └── sql/
+│   ├── ai/
+│   │   ├── llm/
+│   │   └── coding-with-ai/
+│   └── behavioral/
+│       ├── soft-skills/
+│       ├── interview-prep/      # Руководство по прохождению собеседований
+│       ├── communication/
+│       ├── english/
+│       └── mentoring/
 │
 ├── tasks/                       # Практические задачи
 │   ├── frontend/
 │   │   ├── javascript/
-│   │   │   ├── 1_javascript_junior.md
-│   │   │   └── …
-│   │   └── …
-│   ├── algorithms/
-│   │   ├── easy.md
-│   │   ├── medium.md
-│   │   └── hard.md
-│   └── …
+│   │   ├── typescript/
+│   │   ├── css/
+│   │   ├── html/
+│   │   └── react/
+│   └── testing/
+│       └── a11y/
+│
+├── links/
+│   └── README.md                # Полезные ресурсы по категориям
 │
 ├── ai/                          # AI-инструменты
 │   ├── copilot/
-│   └── cursor/
+│   ├── cursor/
+│   └── prompts/
+│
+└── notes/                       # Личные заметки
+    ├── books/
+    ├── courses/
+    ├── conferences/
+    └── til/
 ```
 
 ---
